@@ -14,7 +14,12 @@
     "lang_local": "zh-TW",
     "lang_local_name": "จีน (ไต้หวัน)",
     "currency": "TWD",
-    "hero_photo": "hero"
+    "hero_photo": "hero",
+    "climate": {
+      "hi": 20,
+      "lo": 15,
+      "rain": 40
+    }
   },
   "flights": [
     {

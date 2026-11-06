@@ -123,20 +123,25 @@ const WMO = c => c===0?['☀️','แดด']:c<=2?['🌤️','เมฆบ้�
   const render = (data, stamp) => {
     const d = data.daily; const today = localNow().date;
     const toStart = Math.round((parseD(T.trip.start) - parseD(today))/86400000);
-    let idx = d.time.map((t,i)=>i);
-    const tripIdx = idx.filter(i=>tripDates.has(d.time[i]));
-    if (tripIdx.length){ idx = tripIdx; sub.innerHTML = `พยากรณ์ช่วงทริป<small>${stamp?`อัปเดต ${esc(stamp)}`:''}</small>`; }
-    else { idx = idx.slice(0,7); sub.innerHTML = toStart>0 ? `7 วันข้างหน้า<small>ช่วงทริปจะขึ้นเองเมื่อเหลือ ≤16 วัน (อีก ${toStart} วัน)</small>` : '7 วันข้างหน้า'; }
-    box.innerHTML = idx.map((i,k)=>{ const [ic,txt]=WMO(d.weather_code[i]); return `<div class="${tripDates.has(d.time[i])?'trip':''}" style="--i:${k}"><div class="d">${fmtD(d.time[i])}</div><div class="i" title="${txt}">${ic}</div><div class="t">${Math.round(d.temperature_2m_max[i])}° <small>${Math.round(d.temperature_2m_min[i])}°</small></div><div class="r">☔ ${d.precipitation_probability_max[i] ?? '–'}%</div></div>`; }).join('');
+    const C = T.trip.climate || {hi:20, lo:15, rain:40};
+    // Always the trip days only: real forecast once it reaches them, monthly average before that
+    box.innerHTML = T.days.map((day,k)=>{
+      const i = d ? d.time.indexOf(day.date) : -1;
+      if (i < 0) return `<div style="--i:${k}"><div class="d">${fmtD(day.date)}</div><div class="i" title="ค่าเฉลี่ย">🌥️</div><div class="t">~${C.hi}° <small>${C.lo}°</small></div><div class="r">☔ ~${C.rain}%</div></div>`;
+      const [ic,txt]=WMO(d.weather_code[i]);
+      return `<div class="trip" style="--i:${k}"><div class="d">${fmtD(day.date)}</div><div class="i" title="${txt}">${ic}</div><div class="t">${Math.round(d.temperature_2m_max[i])}° <small>${Math.round(d.temperature_2m_min[i])}°</small></div><div class="r">☔ ${d.precipitation_probability_max[i] ?? '–'}%</div></div>`;
+    }).join('');
+    const got = d && T.days.some(day=>d.time.includes(day.date));
+    sub.innerHTML = got ? `พยากรณ์จริง${stamp?`<small>อัปเดต ${esc(stamp)}</small>`:''}` : `ค่าเฉลี่ยเดือนธันวาคม<small>${toStart>0?`พยากรณ์จริงจะขึ้นเองเมื่อเหลือ ≤16 วัน (อีก ${toStart} วัน)`:''}</small>`;
   };
   const cached = ls.get('wx', null);
-  if (cached) render(cached.data, cached.stamp + ' · ข้อมูลเก่า');
+  render(cached ? cached.data : {daily:null}, cached ? cached.stamp + ' · ข้อมูลเก่า' : '');
   try{
     const u = `https://api.open-meteo.com/v1/forecast?latitude=${T.trip.lat}&longitude=${T.trip.lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=${encodeURIComponent(T.trip.tz)}&forecast_days=16`;
     const r = await fetch(u); if(!r.ok) throw 0; const data = await r.json();
     const stamp = new Date().toLocaleString('th-TH',{dateStyle:'short',timeStyle:'short'});
     ls.set('wx',{data,stamp}); render(data, stamp);
-  }catch(e){ if(!cached) sub.innerHTML = 'โหลดไม่ได้<small>ธ.ค. ปกติ 15–21°C ฝนปรอยบ่อย</small>'; }
+  }catch(e){}
 })();
 
 /* ---------- Boarding passes ---------- */
