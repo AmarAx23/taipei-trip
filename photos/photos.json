@@ -43,28 +43,6 @@
   "license": "CC BY-SA 3.0",
   "licurl": "https://creativecommons.org/licenses/by-sa/3.0"
  },
- "jinfeng": {
-  "file": "jinfeng.jpg",
-  "w": 960,
-  "h": 960,
-  "label": "ข้าวหมูพะโล้ (ภาพตัวอย่าง)",
-  "title": "Lurou fan(Taiwanese cuisine).jpg",
-  "page": "https://commons.wikimedia.org/wiki/File:Lurou_fan(Taiwanese_cuisine).jpg",
-  "author": "Jzest",
-  "license": "CC BY-SA 2.5",
-  "licurl": "https://creativecommons.org/licenses/by-sa/2.5"
- },
- "yongkang": {
-  "file": "yongkang.jpg",
-  "w": 960,
-  "h": 720,
-  "label": "ถนนหย่งคัง",
-  "title": "TW 台灣 Taiwan 台北 Taipei 大安區 Da'An 永康街 Yongkang Street morning March 2024 R12S 110.jpg",
-  "page": "https://commons.wikimedia.org/wiki/File:TW_%E5%8F%B0%E7%81%A3_Taiwan_%E5%8F%B0%E5%8C%97_Taipei_%E5%A4%A7%E5%AE%89%E5%8D%80_Da%27An_%E6%B0%B8%E5%BA%B7%E8%A1%97_Yongkang_Street_morning_March_2024_R12S_110.jpg",
-  "author": "MAm ROFOW 022",
-  "license": "CC0",
-  "licurl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
- },
  "ximending": {
   "file": "ximending.jpg",
   "w": 960,
@@ -87,17 +65,6 @@
   "license": "CC BY-SA 4.0",
   "licurl": "https://creativecommons.org/licenses/by-sa/4.0"
  },
- "fishmarket": {
-  "file": "fishmarket.jpg",
-  "w": 960,
-  "h": 711,
-  "label": "โซนซูชิ ตลาดปลาไทเป",
-  "title": "Sushi Section At Addiction Aquatic Development (72928571).jpeg",
-  "page": "https://commons.wikimedia.org/wiki/File:Sushi_Section_At_Addiction_Aquatic_Development_(72928571).jpeg",
-  "author": "Oliver Propst",
-  "license": "CC BY-SA 3.0",
-  "licurl": "https://creativecommons.org/licenses/by-sa/3.0"
- },
  "huashan": {
   "file": "huashan.jpg",
   "w": 960,
@@ -117,28 +84,6 @@
   "title": "2009-08-25 Din Tai Fung in Taipei.jpg",
   "page": "https://commons.wikimedia.org/wiki/File:2009-08-25_Din_Tai_Fung_in_Taipei.jpg",
   "author": "Michell Zappa",
-  "license": "CC BY-SA 2.0",
-  "licurl": "https://creativecommons.org/licenses/by-sa/2.0"
- },
- "dihua": {
-  "file": "dihua.jpg",
-  "w": 960,
-  "h": 720,
-  "label": "ถนนตี๋ฮว่า",
-  "title": "DiHua Street Sec.1, Taipei (at YongChang Street).jpg",
-  "page": "https://commons.wikimedia.org/wiki/File:DiHua_Street_Sec.1,_Taipei_(at_YongChang_Street).jpg",
-  "author": "Kiyoteru Awaji",
-  "license": "CC BY 4.0",
-  "licurl": "https://creativecommons.org/licenses/by/4.0"
- },
- "ningxia": {
-  "file": "ningxia.jpg",
-  "w": 960,
-  "h": 640,
-  "label": "ตลาดกลางคืนหนิงเซี่ย",
-  "title": "Ningxia Night Market 20250520.jpg",
-  "page": "https://commons.wikimedia.org/wiki/File:Ningxia_Night_Market_20250520.jpg",
-  "author": "迷惘的人生",
   "license": "CC BY-SA 2.0",
   "licurl": "https://creativecommons.org/licenses/by-sa/2.0"
  },
@@ -197,17 +142,6 @@
   "license": "CC BY-SA 3.0",
   "licurl": "https://creativecommons.org/licenses/by-sa/3.0"
  },
- "dunhua": {
-  "file": "dunhua.jpg",
-  "w": 960,
-  "h": 720,
-  "label": "สถานีจงเซี่ยวตุนฮว่า",
-  "title": "Zhongxiao Dunhua Station Exit 2 20201114.jpg",
-  "page": "https://commons.wikimedia.org/wiki/File:Zhongxiao_Dunhua_Station_Exit_2_20201114.jpg",
-  "author": "臺北市政府",
-  "license": "Attribution",
-  "licurl": ""
- },
  "zhengbin": {
   "file": "zhengbin.jpg",
   "w": 960,
@@ -263,17 +197,6 @@
   "license": "CC0",
   "licurl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
  },
- "streetfood": {
-  "file": "streetfood.jpg",
-  "w": 960,
-  "h": 640,
-  "label": "ร้านอาหารริมทางซีเหมินติง",
-  "title": "Taipei Taiwan Ximending-Night-Market-01.jpg",
-  "page": "https://commons.wikimedia.org/wiki/File:Taipei_Taiwan_Ximending-Night-Market-01.jpg",
-  "author": "CEphoto, Uwe Aranas",
-  "license": "CC BY-SA 3.0",
-  "licurl": "https://creativecommons.org/licenses/by-sa/3.0"
- },
  "haokungtao": {
   "file": "haokungtao.jpg",
   "w": 960,
@@ -295,5 +218,16 @@
   "author": "Battlesnake1",
   "license": "CC0",
   "licurl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+ },
+ "zhongshan": {
+  "file": "zhongshan.jpg",
+  "w": 960,
+  "h": 720,
+  "label": "ถนนหนานจิงตะวันตก ย่านจงซาน",
+  "title": "南京西路 dusk view 201911.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:%E5%8D%97%E4%BA%AC%E8%A5%BF%E8%B7%AF_dusk_view_201911.jpg",
+  "author": "Wpcpey",
+  "license": "CC BY 4.0",
+  "licurl": "https://creativecommons.org/licenses/by/4.0"
  }
 }
