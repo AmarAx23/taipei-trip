@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>__TITLE__</title>
 <meta name="description" content="__DESC__">
-<meta name="theme-color" content="#1b2a4a">
+<meta name="theme-color" content="#F4F1EA">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="__TITLE__">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -17,162 +17,133 @@
 <link rel="preload" href="fonts/noto-sans-thai-thai-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="lib/leaflet.css?v=__VERSION__">
 <link rel="stylesheet" href="app.css?v=__VERSION__">
-<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);if(navigator.standalone)document.documentElement.classList.add('ios-app')}catch(e){}</script>
 </head>
 <body>
-<div id="app">
+<div class="wrap" id="app">
 
 <header class="hero" id="top">
-  <picture class="hero-bg"><img id="heroImg" alt="" decoding="async"></picture>
-  <div class="hero-shade"></div>
-  <div class="hero-in pad">
-    <div class="hero-top">
-      <span class="eyebrow" id="heroEyebrow"></span>
-      <button class="pill-btn" id="themeBtn" type="button">โหมดมืด</button>
-    </div>
-    <h1 id="tripName"><span></span><small></small></h1>
-    <p class="when" id="tripWhen"></p>
-    <div class="count-label" id="countLabel"></div>
-    <div class="clock" id="clock" aria-live="off"></div>
-    <p class="hero-credit" id="heroCredit"></p>
+  <canvas class="fw" id="fw" aria-hidden="true"></canvas>
+  <div class="skylan" id="skylan" aria-hidden="true"></div>
+  <button class="theme-toggle-btn" id="themeBtn" type="button" aria-label="สลับโหมดมืด"><span class="tt-stars">✦ ✦</span><span class="tt-cloud">☁️</span><span class="tt-knob"></span></button>
+  <div class="eyebrow" id="heroEyebrow"></div>
+  <h1 id="tripName"></h1>
+  <p class="sub" id="tripWhen"></p>
+  <div class="cd" id="clock" aria-live="off"></div>
+  <p class="cd-msg" id="countLabel"></p>
+  <div class="chips" id="heroChips"></div>
+  <div class="hero-actions">
+    <button class="hbtn" type="button" id="shareBtn">🔗 แชร์</button>
+    <button class="hbtn" type="button" id="sumBtn">🖼️ ภาพสรุป</button>
+    <button class="hbtn" type="button" id="printBtn">🖨️ พิมพ์ A4</button>
   </div>
+  <p class="hero-credit" id="heroCredit"></p>
 </header>
 
-<nav class="quick pad" aria-label="ไปที่หมวด">
-  <a href="#plan">แผน</a><a href="#weather">อากาศ</a><a href="#flights">เที่ยวบิน</a><a href="#money">เงิน</a><a href="#check">เช็กลิสต์</a><a href="#help">ช่วยเหลือ</a><a href="#extras">ภาพสรุป</a>
+<section class="sec" id="weather">
+  <div class="sec-h"><h2>⛅ อากาศไทเป</h2><span class="sec-note" id="wxSub">กำลังโหลด…</span></div>
+  <div class="wx" id="wx"></div>
+</section>
+
+<section class="sec" id="plan">
+  <div class="sec-h"><h2>🗓️ แผนรายวัน</h2><span class="sec-note">ปัดซ้าย-ขวาเพื่อเปลี่ยนวัน</span></div>
+  <div class="today-banner" id="todayBanner" hidden></div>
+  <div class="dtabs" role="tablist" id="tabs"></div>
+  <div class="card days-card"><div class="days" id="days"></div></div>
+  <div class="extras-list" id="extraPlaces"></div>
+</section>
+
+<section class="sec" id="flights">
+  <div class="sec-h"><h2>✈️ ตั๋วเครื่องบิน EVA Air</h2><span class="sec-note">แตะตั๋วเพื่อพลิก</span></div>
+  <div id="tickets"></div>
+  <div id="hotelCard"></div>
+</section>
+
+<section class="sec" id="money">
+  <div class="sec-h"><h2>💱 แปลงเงิน บาท ⇄ ดอลลาร์ไต้หวัน</h2></div>
+  <div class="card">
+    <div class="fx">
+      <label class="fx-row"><span>บาท (THB)</span><input id="fxThb" type="number" inputmode="decimal" min="0" step="any" value="1000"></label>
+      <button class="swap" id="fxSwap" type="button" aria-label="สลับช่อง">⇅</button>
+      <label class="fx-row"><span>ดอลลาร์ไต้หวัน (TWD)</span><input id="fxTwd" type="number" inputmode="decimal" min="0" step="any"></label>
+    </div>
+    <div class="fx-quick" id="fxQuick"></div>
+    <p class="fine" id="fxNote">กำลังโหลดเรท…</p>
+  </div>
+</section>
+
+<section class="sec" id="check">
+  <div class="sec-h"><h2>🎒 สิ่งที่ต้องเตรียม</h2><span class="sec-note" id="checkSub"></span></div>
+  <div class="card">
+    <div class="bar"><i id="checkBar"></i></div>
+    <ul class="checklist" id="checklist"></ul>
+    <form class="add-check" id="addCheck"><input id="addCheckInput" placeholder="เพิ่มรายการ…" aria-label="เพิ่มรายการ"><button type="submit" class="btn">เพิ่ม</button></form>
+  </div>
+</section>
+
+<section class="sec" id="help">
+  <div class="sec-h"><h2>🆘 ช่วยเหลือในไต้หวัน</h2></div>
+
+  <div class="drv" id="driver">
+    <div class="drv-top"><span>請帶我去 · ยื่นให้คนขับดู</span><select id="driverSel" aria-label="เลือกจุดหมาย"></select></div>
+    <div class="drv-big" id="driverBig" lang="zh-TW"></div>
+    <div class="drv-sub" id="driverSub"></div>
+    <div class="drv-acts"><button type="button" class="btn" id="driverSpeak">🔊 ให้เว็บพูดภาษาจีน</button><button type="button" class="btn ghost" id="driverFull">เต็มจอ</button></div>
+  </div>
+
+  <div class="sec-h sub-h"><h3>🗣️ ล่ามแปล ไทย ⇄ จีน</h3><span class="sec-note">กดไมค์แล้วพูด</span></div>
+  <div class="card tr">
+    <div class="mics">
+      <button type="button" class="mic th" id="trMicTh"><span class="mic-i">🎙️</span><b>พูดไทย</b><small>แปลเป็นจีนให้พนักงาน</small></button>
+      <button type="button" class="mic zh" id="trMicZh"><span class="mic-i">🎙️</span><b lang="zh-TW">說中文</b><small>ให้พนักงานพูด แปลเป็นไทย</small></button>
+    </div>
+    <div class="tr-status" id="trStatus"></div>
+    <div class="tr-log" id="trLog"></div>
+    <div class="tr-form">
+      <button type="button" class="tr-dir" id="trDir">ไทย → 中文</button>
+      <textarea id="trIn" rows="2" placeholder="หรือพิมพ์ไทยตรงนี้"></textarea>
+      <button type="button" class="btn" id="trGo">แปล</button>
+    </div>
+    <p class="fine" id="trNote">ต้องต่ออินเทอร์เน็ต · ถ้าไม่มีเน็ตใช้ประโยคสำเร็จรูปด้านล่าง</p>
+  </div>
+
+  <div class="sec-h sub-h"><h3>💬 ประโยคที่ใช้บ่อย</h3><span class="sec-note">กดเพื่อฟังเสียง</span></div>
+  <ul class="phrases" id="phrases"></ul>
+
+  <div class="sec-h sub-h"><h3>📞 เบอร์ฉุกเฉิน</h3></div>
+  <ul class="emerg" id="emerg"></ul>
+</section>
+
+<section class="sec" id="credits">
+  <div class="sec-h"><h2>📷 เครดิต</h2></div>
+  <div class="card foot">
+    <p class="fine">รูปจาก Wikimedia Commons ใช้ตามเงื่อนไขของแต่ละไลเซนส์ · แผนที่ © OpenStreetMap contributors · อากาศจาก Open-Meteo · เรทเงินจาก ExchangeRate-API · ฟอนต์ Kanit, Noto Sans Thai</p>
+    <ol class="credits" id="creditList"></ol>
+    <p class="fine" id="verLine"></p>
+  </div>
+</section>
+</div>
+
+<nav class="bnav" id="bnav" aria-label="เมนูหลัก">
+  <a href="#plan" data-sec="plan"><i>🗓️</i>แผน</a>
+  <a href="#flights" data-sec="flights"><i>✈️</i>ตั๋ว</a>
+  <a href="#money" data-sec="money"><i>💱</i>เงิน</a>
+  <a href="#check" data-sec="check"><i>🎒</i>เตรียมของ</a>
+  <a href="#help" data-sec="help"><i>🆘</i>ช่วยเหลือ</a>
 </nav>
-
-<main>
-  <section class="sec pad" id="weather">
-    <div class="sec-in">
-      <h2>พยากรณ์อากาศ</h2>
-      <p class="sub" id="wxSub">กำลังโหลด…</p>
-      <div class="wx" id="wx"></div>
-    </div>
-  </section>
-
-  <section class="sec pad" id="flights">
-    <div class="sec-in">
-      <h2>เที่ยวบิน</h2>
-      <p class="sub">แตะตั๋วเพื่อพลิกดูกฎกระเป๋า</p>
-      <div class="tickets" id="tickets"></div>
-    </div>
-  </section>
-
-  <section class="sec" id="plan">
-    <div class="pad"><div class="sec-in">
-      <h2>แผนรายวัน</h2>
-      <div class="today-banner" id="todayBanner" hidden></div>
-    </div></div>
-    <div class="tabs-wrap pad" id="tabsWrap"><div class="tabs sec-in" role="tablist" id="tabs"></div></div>
-    <div class="days" id="days"></div>
-    <div class="pad"><div class="sec-in extras-list" id="extraPlaces"></div></div>
-  </section>
-
-  <section class="sec pad" id="hotel">
-    <div class="sec-in" id="hotelCard"></div>
-  </section>
-
-  <section class="sec pad" id="money">
-    <div class="sec-in">
-      <h2>แปลงเงิน</h2>
-      <div class="fx">
-        <label class="fx-row"><span>บาท (THB)</span><input id="fxThb" type="number" inputmode="decimal" min="0" step="any" value="1000"></label>
-        <button class="swap" id="fxSwap" type="button" aria-label="สลับ">⇅</button>
-        <label class="fx-row"><span>ดอลลาร์ไต้หวัน (TWD)</span><input id="fxTwd" type="number" inputmode="decimal" min="0" step="any"></label>
-      </div>
-      <p class="sub" id="fxNote">กำลังโหลดเรท…</p>
-      <div class="fx-quick" id="fxQuick"></div>
-    </div>
-  </section>
-
-  <section class="sec pad" id="check">
-    <div class="sec-in">
-      <h2>เช็กลิสต์ของที่ต้องเตรียม</h2>
-      <p class="sub" id="checkSub"></p>
-      <div class="bar"><i id="checkBar"></i></div>
-      <ul class="checklist" id="checklist"></ul>
-      <form class="add-check" id="addCheck"><input id="addCheckInput" placeholder="เพิ่มรายการ…" aria-label="เพิ่มรายการ"><button type="submit">เพิ่ม</button></form>
-    </div>
-  </section>
-
-  <section class="sec pad" id="help">
-    <div class="sec-in">
-      <h2>ช่วยเหลือ</h2>
-
-      <div class="card driver" id="driver">
-        <div class="card-head"><h3>การ์ดให้คนขับดู</h3><select id="driverSel" aria-label="เลือกจุดหมาย"></select></div>
-        <div class="driver-big" id="driverBig" lang="zh-TW"></div>
-        <div class="driver-sub" id="driverSub"></div>
-        <div class="row-btns"><button type="button" id="driverSpeak">🔊 อ่านออกเสียง</button><button type="button" id="driverFull">เต็มจอ</button></div>
-      </div>
-
-      <div class="card" id="translator">
-        <div class="card-head"><h3>ล่ามแปลภาษา</h3><button type="button" class="dir" id="trDir">ไทย → จีน</button></div>
-        <div class="tr-box">
-          <textarea id="trIn" rows="3" placeholder="พิมพ์หรือกดไมค์พูดภาษาไทย"></textarea>
-          <div class="row-btns">
-            <button type="button" id="trMicTh">🎤 ไทย</button>
-            <button type="button" id="trMicZh">🎤 จีน</button>
-            <button type="button" id="trGo" class="primary">แปล</button>
-          </div>
-          <div class="tr-out" id="trOut" aria-live="polite"></div>
-          <div class="row-btns"><button type="button" id="trSpeak">🔊 อ่าน</button><button type="button" id="trFull">ตัวใหญ่ให้พนักงานดู</button></div>
-          <p class="sub" id="trNote">การแปลต้องต่อเน็ต</p>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>ประโยคที่ใช้บ่อย</h3>
-        <ul class="phrases" id="phrases"></ul>
-      </div>
-
-      <div class="card">
-        <h3>เบอร์ฉุกเฉิน</h3>
-        <ul class="emerg" id="emerg"></ul>
-        <div id="consulate"></div>
-        <div id="hospital"></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="sec pad" id="extras">
-    <div class="sec-in">
-      <h2>ภาพสรุปและเอกสาร</h2>
-      <div class="row-btns">
-        <button type="button" id="sumBtn" class="primary">ภาพสรุป</button>
-        <button type="button" id="printBtn">พิมพ์ A4</button>
-      </div>
-      <p class="sub">ภาพสรุปวันละ 1 ภาพ + ภาพรวมทริป แชร์หรือบันทึกได้</p>
-    </div>
-  </section>
-
-  <section class="sec pad" id="credits">
-    <div class="sec-in">
-      <h2>เครดิตรูปภาพ</h2>
-      <p class="sub">รูปจาก Wikimedia Commons ใช้ตามเงื่อนไขของแต่ละไลเซนส์ · แผนที่ © OpenStreetMap contributors · อากาศจาก Open-Meteo · เรทเงินจาก ExchangeRate-API</p>
-      <ol class="credits" id="creditList"></ol>
-      <p class="sub" id="verLine"></p>
-    </div>
-  </section>
-</main>
 
 <div class="sheet" id="sumSheet" hidden>
   <div class="sheet-in">
-    <div class="sheet-head"><h3>ภาพสรุป</h3><button type="button" class="x" data-close aria-label="ปิด">✕</button></div>
-    <div class="row-btns"><button type="button" id="sumLang">ชื่อภาษาจีน</button></div>
+    <div class="sheet-head"><b>ภาพสรุป</b><button type="button" class="x" data-close aria-label="ปิด">✕</button></div>
+    <div class="pst-lang" id="sumLang"><button type="button" class="on" data-l="th">ภาษาไทย</button><button type="button" data-l="zh">中文</button></div>
     <div class="sum-grid" id="sumGrid"></div>
   </div>
 </div>
 
 <div class="big" id="bigView" hidden><button type="button" class="x" data-close aria-label="ปิด">✕</button><div class="big-text" id="bigText"></div><div class="big-sub" id="bigSub"></div></div>
-
 <div class="lightbox" id="lightbox" hidden><button type="button" class="x" data-close aria-label="ปิด">✕</button><img id="lbImg" alt=""><p id="lbCap"></p></div>
-
 <div class="toast" id="toast" hidden></div>
-<button class="update" id="updateBtn" type="button" hidden>มีเวอร์ชันใหม่ แตะเพื่ออัปเดต</button>
-
-</div>
+<button class="update" id="updateBtn" type="button" hidden>✨ มีเวอร์ชันใหม่ แตะเพื่ออัปเดต</button>
 
 <div class="print-sheet" id="printSheet" aria-hidden="true"></div>
 
