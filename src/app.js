@@ -216,6 +216,7 @@ const maps = {};
           <div class="mall"><a href="${gdir}" target="_blank" rel="noopener">🗺️ เปิดทุกจุดใน Google Maps</a></div>
           <small>เส้นทางเริ่มจากที่พัก · แผนที่ส่วนที่เคยเปิดตอนมีเน็ตจะจำไว้ใช้ออฟไลน์ ถ้าโหลดไม่ได้จะแสดงแผนผังแทน</small></figcaption>
       </figure>
+      ${d.rain?`<div class="note rain"><span>☔</span><span><b>แผนสำรองฝนตก</b> · ${esc(d.rain)}</span></div>`:''}
       <ol class="tl">${(()=>{ let k=0; return d.stops.map((s,j)=>{
         const p = s.skip_photo ? null : photo(s.photo); const num = (s.hotel||s.skip_route)?'':++k;
         return `<li class="ev${s.hotel?' hotel':''}" data-day="${i}" data-j="${j}" data-time="${esc(s.time)}">
@@ -345,6 +346,11 @@ const maps = {};
   }catch(e){ if(!rate) note.textContent='โหลดเรทไม่ได้ (ต้องต่อเน็ตครั้งแรก)'; }
 })();
 
+/* ---------- Tips ---------- */
+(function tips(){
+  $('#tips').innerHTML=(T.tips||[]).map(x=>`<li class="rv"><span class="ic">${x.icon}</span><div class="tx"><b>${esc(x.title)}</b><small>${esc(x.text)}</small>${x.link?`<div class="links"><a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.linkText||'เปิดลิงก์')} ↗</a></div>`:''}</div></li>`).join('');
+})();
+
 /* ---------- Checklist ---------- */
 (function checklist(){
   const ul=$('#checklist');
@@ -405,7 +411,7 @@ function bigShow(text, sub){ $('#bigText').textContent=text; $('#bigSub').textCo
   /* Translator with chat bubbles */
   let dir='th';
   const dirBtn=$('#trDir'), inp=$('#trIn'), log=$('#trLog'), status=$('#trStatus');
-  const setDir=d=>{ dir=d; dirBtn.textContent = d==='th'?'ไทย → 中文':'中文 → ไทย'; inp.placeholder = d==='th'?'หรือพิมพ์ไทยตรงนี้':'或在這裡輸入中文'; };
+  const setDir=d=>{ dir=d; dirBtn.textContent = d==='th'?'ไทย → 繁體中文':'繁體中文 → ไทย'; inp.placeholder = d==='th'?'หรือพิมพ์ไทยตรงนี้':'或在這裡輸入中文'; };
   dirBtn.onclick=()=>setDir(dir==='th'?'zh':'th');
   async function tr(q, sl, tl){
     try{ const r=await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tl}&dt=t&q=${encodeURIComponent(q)}`); if(!r.ok) throw 0; const j=await r.json(); return j[0].map(x=>x[0]).join(''); }catch(e){}
