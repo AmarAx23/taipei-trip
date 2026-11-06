@@ -240,5 +240,60 @@
   "author": "Peacearth",
   "license": "CC BY-SA 4.0",
   "licurl": "https://creativecommons.org/licenses/by-sa/4.0"
+ },
+ "taipeimain": {
+  "file": "taipeimain.jpg",
+  "w": 960,
+  "h": 720,
+  "label": "สถานีไทเป",
+  "title": "Concourse of Taipei Main Station 20210419.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Concourse_of_Taipei_Main_Station_20210419.jpg",
+  "author": "Lokseng01",
+  "license": "CC BY-SA 4.0",
+  "licurl": "https://creativecommons.org/licenses/by-sa/4.0"
+ },
+ "airportmrt": {
+  "file": "airportmrt.jpg",
+  "w": 960,
+  "h": 720,
+  "label": "รถไฟ Airport MRT",
+  "title": "Taoyuan Airport MRT Train at Guishan, Taoyuan 20171220.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Taoyuan_Airport_MRT_Train_at_Guishan,_Taoyuan_20171220.jpg",
+  "author": "玄史生",
+  "license": "CC0",
+  "licurl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+ },
+ "streetfood": {
+  "file": "streetfood.jpg",
+  "w": 960,
+  "h": 640,
+  "label": "ร้านอาหารริมทางซีเหมินติง",
+  "title": "Taipei Taiwan Ximending-Night-Market-01.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Taipei_Taiwan_Ximending-Night-Market-01.jpg",
+  "author": "CEphoto, Uwe Aranas",
+  "license": "CC BY-SA 3.0",
+  "licurl": "https://creativecommons.org/licenses/by-sa/3.0"
+ },
+ "haokungtao": {
+  "file": "haokungtao.jpg",
+  "w": 960,
+  "h": 720,
+  "label": "เสี่ยวหลงเปา ถ.หย่งคัง (ภาพตัวอย่าง)",
+  "title": "Xiaolongbao by Miya.m in YongKang Street, Taipei.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Xiaolongbao_by_Miya.m_in_YongKang_Street,_Taipei.jpg",
+  "author": "Miya.m @ miya_ja from Restauant Kao-chi at YongKang Street in Taipei",
+  "license": "CC BY-SA 2.0",
+  "licurl": "https://creativecommons.org/licenses/by-sa/2.0"
+ },
+ "chunshuitang": {
+  "file": "chunshuitang.jpg",
+  "w": 960,
+  "h": 1280,
+  "label": "ชานมไข่มุก Chun Shui Tang",
+  "title": "Pearl Milk Tea in Chun Shui Tang.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Pearl_Milk_Tea_in_Chun_Shui_Tang.jpg",
+  "author": "Battlesnake1",
+  "license": "CC0",
+  "licurl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
  }
 }
