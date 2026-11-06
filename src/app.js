@@ -236,7 +236,10 @@ const maps = {};
 
   const tabEls = $$('.dtab', tabs);
   let cur = 0;
-  const sel = i => { cur=i; tabEls.forEach((t,k)=>t.setAttribute('aria-selected', String(k===i))); tabEls[i].scrollIntoView({block:'nearest',inline:'center',behavior:RM?'auto':'smooth'}); initMap(i); progress(); };
+  /* Fit the card to the day being shown, so a short day leaves no empty space */
+  const fit = () => { const pane=days.children[cur]; if(pane) days.style.height = pane.offsetHeight + 'px'; };
+  if ('ResizeObserver' in window){ const ro=new ResizeObserver(()=>fit()); [...days.children].forEach(p=>ro.observe(p)); }
+  const sel = i => { cur=i; fit(); tabEls.forEach((t,k)=>t.setAttribute('aria-selected', String(k===i))); tabEls[i].scrollIntoView({block:'nearest',inline:'center',behavior:RM?'auto':'smooth'}); initMap(i); progress(); };
   window.goDay = (i, toMap=true, smooth=true) => {
     days.scrollTo({left: i*days.clientWidth, behavior: (smooth && !RM)?'smooth':'auto'}); sel(i);
     if (toMap) $('#dmap'+i).scrollIntoView({behavior: RM?'auto':'smooth', block:'center'});

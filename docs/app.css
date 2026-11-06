@@ -145,7 +145,7 @@ html.ios-app .dtabs{top:env(safe-area-inset-top,0px)}
 .dtab[aria-selected="true"] b{color:#fff}
 .dtab.today::after{content:"";position:absolute;top:5px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--red)}
 .days-card{padding:0;overflow:hidden}
-.days{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
+.days{display:flex;align-items:flex-start;transition:height .3s ease;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
 .days::-webkit-scrollbar{display:none}
 .day{flex:0 0 100%;scroll-snap-align:start;scroll-snap-stop:always;min-width:0;padding:18px 16px 16px}
 .dayhead{display:flex;gap:14px;align-items:center}
