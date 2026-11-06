@@ -229,7 +229,7 @@ const maps = {};
             ${s.spots?.length?`<ol class="spots">${s.spots.map((x,m)=>`<li><a href="${gmap(x.lat,x.lon,x.local)}" target="_blank" rel="noopener"><b>${String.fromCharCode(65+m)}</b><span><span class="sn">${esc(x.name)}</span><span class="zh" lang="zh-TW">${esc(x.local)}${x.hours?` · ${esc(x.hours)}`:''}</span></span><i>📍</i></a></li>`).join('')}</ol>
             <div class="links"><a class="walk" href="${walkUrl(s)}" target="_blank" rel="noopener">🚶 เส้นทางเดินผ่านทุกจุด</a></div>`:''}
             ${(s.hours||s.warn)?`<div class="tags">${s.hours?`<span class="tag gold">🕒 ${esc(s.hours)}</span>`:''}${s.warn?`<span class="tag">⚠️ ${esc(s.warn)}</span>`:''}</div>`:''}
-            <div class="links"><a href="${gmap(s.lat,s.lon,s.q||s.local)}" target="_blank" rel="noopener">📍 Google Maps</a><a href="${amap(s.lat,s.lon,s.local)}" target="_blank" rel="noopener">🍎 Apple</a><button type="button" data-drv="${i}-${j}">🚕 การ์ดคนขับ</button></div>
+            <div class="links"><a href="${s.gurl||gmap(s.lat,s.lon,s.q||s.local)}" target="_blank" rel="noopener">📍 Google Maps</a><a href="${amap(s.lat,s.lon,s.local)}" target="_blank" rel="noopener">🍎 Apple</a><button type="button" data-drv="${i}-${j}">🚕 การ์ดคนขับ</button></div>
           </div></li>`; }).join(''); })()}</ol>
     </article>`;
   }).join('');
