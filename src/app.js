@@ -452,7 +452,7 @@ function bigShow(text, sub){ $('#bigText').textContent=text; $('#bigSub').textCo
 })();
 
 /* ---------- Overlays ---------- */
-function closeAll(){ ['#bigView','#lightbox','#sumSheet'].forEach(s=>$(s).hidden=true); document.documentElement.classList.remove('mfs-open'); }
+function closeAll(){ ['#bigView','#lightbox','#sumSheet','#installSheet'].forEach(s=>$(s).hidden=true); document.documentElement.classList.remove('mfs-open'); }
 document.addEventListener('click',e=>{ if(e.target.closest('[data-close]') || e.target.id==='lightbox') closeAll(); });
 addEventListener('keydown',e=>{ if(e.key==='Escape') closeAll(); });
 /* Lightbox grows from the thumbnail's own position */
@@ -574,6 +574,31 @@ document.addEventListener('click',e=>{
   if(RM || !('IntersectionObserver' in window)){ $$('.ph.cur').forEach(p=>p.classList.add('open')); return; }
   const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.remove('pre'); e.target.classList.add('open'); io.unobserve(e.target); } }),{rootMargin:'0px 0px -10% 0px'});
   $$('.card, .rv, .ph.cur, .ex, .phrases li, .emerg li').forEach(el=>{ const r=el.getBoundingClientRect(); if(el.classList.contains('ph')){ io.observe(el); return; } if(r.top>innerHeight){ el.classList.add('rv','pre'); io.observe(el); } });
+})();
+
+/* ---------- Install as app ---------- */
+(function install(){
+  const btn=$('#installBtn'), sheet=$('#installSheet'), steps=$('#installSteps');
+  const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  if (standalone) return;
+  const ua=navigator.userAgent;
+  const ios=/iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints>1);
+  const iosOther = ios && /CriOS|FxiOS|EdgiOS|Line\/|FBAN|Instagram/.test(ua);
+  const android=/Android/.test(ua);
+  let deferred=null;
+  addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); deferred=e; btn.hidden=false; });
+  addEventListener('appinstalled',()=>{ btn.hidden=true; closeAll(); toast('🎉 ติดตั้งแล้ว เปิดได้จากหน้าจอโฮม'); });
+  btn.hidden=false;
+  btn.onclick=async()=>{
+    if (deferred){ deferred.prompt(); const r=await deferred.userChoice.catch(()=>null); if(r?.outcome==='accepted') btn.hidden=true; deferred=null; return; }
+    let html;
+    if (ios && !iosOther) html=`<ol class="isteps"><li><span>กดปุ่มแชร์ <span class="glyph">⬆︎</span> ด้านล่าง (หรือด้านบนบน iPad) ของ Safari</span></li><li><span>เลื่อนลงแล้วเลือก <b>"เพิ่มไปยังหน้าจอโฮม"</b> <span class="glyph">＋</span></span></li><li><span>กด <b>"เพิ่ม"</b> มุมขวาบน ไอคอนตึก 101 จะอยู่บนหน้าจอโฮม</span></li></ol><p class="ihint">เปิดแอปจากไอคอนครั้งแรกตอนมีเน็ต จากนั้นใช้ออฟไลน์ได้ · ถ้าไม่เห็นเมนูนี้ ให้เลื่อนแถวไอคอนแอปในหน้าแชร์ไปจนสุดแล้วกด "แก้ไขการทำงาน"</p>`;
+    else if (iosOther) html=`<ol class="isteps"><li><span>iPhone ติดตั้งแอปได้จาก <b>Safari</b> เท่านั้น กดปุ่มด้านล่างเพื่อคัดลอกลิงก์</span></li><li><span>เปิด Safari แล้ววางลิงก์</span></li><li><span>กดแชร์ <span class="glyph">⬆︎</span> → <b>"เพิ่มไปยังหน้าจอโฮม"</b></span></li></ol><div class="links" style="margin-top:12px"><button type="button" id="copyLink">📋 คัดลอกลิงก์</button></div>`;
+    else if (android) html=`<ol class="isteps"><li><span>กดเมนู <span class="glyph">⋮</span> มุมขวาบนของ Chrome</span></li><li><span>เลือก <b>"ติดตั้งแอป"</b> หรือ <b>"เพิ่มลงในหน้าจอหลัก"</b></span></li><li><span>กด <b>"ติดตั้ง"</b></span></li></ol>`;
+    else html=`<ol class="isteps"><li><span><b>Chrome / Edge:</b> กดไอคอนติดตั้ง <span class="glyph">⊕</span> ท้ายช่องที่อยู่เว็บ หรือเมนู <span class="glyph">⋮</span> → "ติดตั้ง ไทเป ทริป"</span></li><li><span><b>Safari บน Mac:</b> เมนู File → <b>"Add to Dock"</b></span></li></ol><p class="ihint">ใช้บนมือถือสะดวกที่สุด เปิดลิงก์นี้ใน Safari (iPhone) หรือ Chrome (Android)</p>`;
+    steps.innerHTML=html; sheet.hidden=false; document.documentElement.classList.add('mfs-open');
+    const cp=$('#copyLink'); if(cp) cp.onclick=async()=>{ try{ await navigator.clipboard.writeText(location.href.split('#')[0]); toast('คัดลอกลิงก์แล้ว เปิด Safari แล้ววางได้เลย'); }catch(e){ toast(location.href.split('#')[0],6000); } };
+  };
 })();
 
 /* ---------- Service worker + update prompt ---------- */

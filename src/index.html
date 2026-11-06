@@ -37,6 +37,7 @@
     <button class="hbtn" type="button" id="sumBtn">🖼️ ภาพสรุป</button>
     <button class="hbtn" type="button" id="printBtn">🖨️ พิมพ์ A4</button>
   </div>
+  <button class="install" type="button" id="installBtn" hidden><span>📲</span><span><b>ติดตั้งเป็นแอปบนมือถือ</b><small>เปิดจากหน้าจอโฮม ใช้ได้แม้ไม่มีเน็ต</small></span><i>›</i></button>
   <p class="hero-credit" id="heroCredit"></p>
 </header>
 
@@ -139,6 +140,13 @@
     <div class="sheet-head"><b>ภาพสรุป</b><button type="button" class="x" data-close aria-label="ปิด">✕</button></div>
     <div class="pst-lang" id="sumLang"><button type="button" class="on" data-l="th">ภาษาไทย</button><button type="button" data-l="zh">中文</button></div>
     <div class="sum-grid" id="sumGrid"></div>
+  </div>
+</div>
+
+<div class="sheet" id="installSheet" hidden>
+  <div class="sheet-in">
+    <div class="sheet-head"><b>ติดตั้งแอป ไทเป ทริป</b><button type="button" class="x" data-close aria-label="ปิด">✕</button></div>
+    <div id="installSteps"></div>
   </div>
 </div>
 
