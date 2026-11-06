@@ -199,11 +199,13 @@ const maps = {};
   const icons=['🏯','🐟','🏮','🚡'];
   days.innerHTML = T.days.map((d,i)=>{
     const dt=parseD(d.date);
-    const rs = d.stops.filter(s=>!s.skip_route);
-    const pts = rs.map(s=>`${s.lat},${s.lon}`);
-    const dest = pts[pts.length-1];
-    const wps = pts.slice(0,-1).slice(0,9).join('|');
-    const gdir = `https://www.google.com/maps/dir/?api=1&origin=${H.lat},${H.lon}&destination=${dest}${wps?`&waypoints=${encodeURIComponent(wps)}`:''}&travelmode=transit`;
+    // Start at the hotel and drop back-to-back repeats (e.g. hotel→hotel), which make Google Maps give up on the route
+    const near=(a,b)=>Math.abs(a[0]-b[0])<0.0004 && Math.abs(a[1]-b[1])<0.0004;
+    const seq=[[H.lat,H.lon]];
+    d.stops.filter(s=>!s.skip_route).forEach(s=>{ const p=[s.lat,s.lon]; if(!near(p,seq[seq.length-1])) seq.push(p); });
+    const pts = seq.map(p=>`${p[0]},${p[1]}`);
+    const wps = pts.slice(1,-1).slice(0,9).join('|');
+    const gdir = `https://www.google.com/maps/dir/?api=1&origin=${pts[0]}&destination=${pts[pts.length-1]}${wps?`&waypoints=${encodeURIComponent(wps)}`:''}`;
     let n=0;
     const legs = d.stops.map((s,j)=> s.skip_route ? '' : `<button type="button" class="mleg${s.hotel?' h':''}" data-day="${i}" data-j="${j}"><b>${s.hotel?'🏨':(++n)}</b>${esc(s.name.replace(/^โรงแรม: /,''))}</button>`).join('');
     return `<article class="day" id="day${i+1}" role="tabpanel" aria-label="วันที่ ${i+1}" data-i="${i}">
