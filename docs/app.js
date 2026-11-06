@@ -21,7 +21,7 @@ function localNow(){
 let toastT;
 function toast(msg, ms=2600){ const t=$('#toast'); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true, ms); }
 const photo = key => key && P[key] ? P[key] : null;
-const credit = p => p ? `ภาพ: <a href="${esc(p.page)}" target="_blank" rel="noopener">${esc(p.author||'Wikimedia Commons')}</a> · ${esc(p.license)}` : '';
+const credit = p => p ? `${/ตัวอย่าง/.test(p.label||'')?'ภาพตัวอย่าง · ':''}ภาพ: <a href="${esc(p.page)}" target="_blank" rel="noopener">${esc(p.author||'Wikimedia Commons')}</a> · ${esc(p.license)}` : '';
 const gmap = (lat, lon, q) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q || (lat+','+lon))}`;
 const amap = (lat, lon, q) => `https://maps.apple.com/?q=${encodeURIComponent(q||'')}&ll=${lat},${lon}`;
 const walkUrl = s => { const pts=s.spots.map(x=>`${x.lat},${x.lon}`); const w=pts.slice(0,-1).join('|'); return `https://www.google.com/maps/dir/?api=1&origin=${T.hotel.lat},${T.hotel.lon}&destination=${pts[pts.length-1]}${w?`&waypoints=${encodeURIComponent(w)}`:''}&travelmode=walking`; };
