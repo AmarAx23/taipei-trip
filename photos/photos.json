@@ -1,0 +1,90 @@
+{
+ "hero": {
+  "file": "hero.jpg",
+  "w": 960,
+  "h": 640,
+  "label": "ไทเปยามค่ำคืนจากเขาเซี่ยงซาน",
+  "title": "Taipei Skyline at night viewed from Mount Elephant 2026.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Taipei_Skyline_at_night_viewed_from_Mount_Elephant_2026.jpg",
+  "author": "迷惘的人生",
+  "license": "CC BY-SA 4.0",
+  "licurl": "https://creativecommons.org/licenses/by-sa/4.0"
+ },
+ "longshan": {
+  "file": "longshan.jpg",
+  "w": 960,
+  "h": 700,
+  "label": "วัดหลงซาน",
+  "title": "Taipei Taiwan Mengjia-Longshan-Temple-00.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Taipei_Taiwan_Mengjia-Longshan-Temple-00.jpg",
+  "author": "CEphoto, Uwe Aranas",
+  "license": "CC BY-SA 3.0",
+  "licurl": "https://creativecommons.org/licenses/by-sa/3.0"
+ },
+ "zhouji": {
+  "file": "zhouji.jpg",
+  "w": 960,
+  "h": 640,
+  "label": "ย่านป๋อผีเลี่ยว ตรงข้ามร้าน",
+  "title": "Bopiliao Historic Block 剝皮寮歷史街區.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Bopiliao_Historic_Block_%E5%89%9D%E7%9A%AE%E5%AF%AE%E6%AD%B7%E5%8F%B2%E8%A1%97%E5%8D%80.jpg",
+  "author": "HSIAO, WEN-CHIEN",
+  "license": "CC BY-SA 4.0",
+  "licurl": "https://creativecommons.org/licenses/by-sa/4.0"
+ },
+ "cks": {
+  "file": "cks.jpg",
+  "w": 960,
+  "h": 640,
+  "label": "หอรำลึกเจียงไคเช็ค",
+  "title": "Chiang Kai-shek memorial amk.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Chiang_Kai-shek_memorial_amk.jpg",
+  "author": "AngMoKio",
+  "license": "CC BY-SA 3.0",
+  "licurl": "https://creativecommons.org/licenses/by-sa/3.0"
+ },
+ "jinfeng": {
+  "file": "jinfeng.jpg",
+  "w": 960,
+  "h": 960,
+  "label": "ข้าวหมูพะโล้ (ภาพตัวอย่าง)",
+  "title": "Lurou fan(Taiwanese cuisine).jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Lurou_fan(Taiwanese_cuisine).jpg",
+  "author": "Jzest",
+  "license": "CC BY-SA 2.5",
+  "licurl": "https://creativecommons.org/licenses/by-sa/2.5"
+ },
+ "yongkang": {
+  "file": "yongkang.jpg",
+  "w": 960,
+  "h": 720,
+  "label": "ถนนหย่งคัง",
+  "title": "TW 台灣 Taiwan 台北 Taipei 大安區 Da'An 永康街 Yongkang Street morning March 2024 R12S 110.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:TW_%E5%8F%B0%E7%81%A3_Taiwan_%E5%8F%B0%E5%8C%97_Taipei_%E5%A4%A7%E5%AE%89%E5%8D%80_Da%27An_%E6%B0%B8%E5%BA%B7%E8%A1%97_Yongkang_Street_morning_March_2024_R12S_110.jpg",
+  "author": "MAm ROFOW 022",
+  "license": "CC0",
+  "licurl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+ },
+ "ximending": {
+  "file": "ximending.jpg",
+  "w": 960,
+  "h": 640,
+  "label": "ทางม้าลายสีรุ้ง ซีเหมินติง",
+  "title": "Ximending rainbow crossing 201910.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Ximending_rainbow_crossing_201910.jpg",
+  "author": "Volksabstimmung",
+  "license": "CC BY-SA 2.0",
+  "licurl": "https://creativecommons.org/licenses/by-sa/2.0"
+ },
+ "mala": {
+  "file": "mala.jpg",
+  "w": 960,
+  "h": 640,
+  "label": "หม่าล่าหม้อไฟ (ภาพตัวอย่าง)",
+  "title": "Concentric hot pot in Chongqing (20180217165607).jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Concentric_hot_pot_in_Chongqing_(20180217165607).jpg",
+  "author": "N509FZ",
+  "license": "CC BY-SA 4.0",
+  "licurl": "https://creativecommons.org/licenses/by-sa/4.0"
+ }
+}
