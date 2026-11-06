@@ -24,6 +24,7 @@ const photo = key => key && P[key] ? P[key] : null;
 const credit = p => p ? `ภาพ: <a href="${esc(p.page)}" target="_blank" rel="noopener">${esc(p.author||'Wikimedia Commons')}</a> · ${esc(p.license)}` : '';
 const gmap = (lat, lon, q) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q || (lat+','+lon))}`;
 const amap = (lat, lon, q) => `https://maps.apple.com/?q=${encodeURIComponent(q||'')}&ll=${lat},${lon}`;
+const walkUrl = s => { const pts=s.spots.map(x=>`${x.lat},${x.lon}`); const w=pts.slice(0,-1).join('|'); return `https://www.google.com/maps/dir/?api=1&origin=${T.hotel.lat},${T.hotel.lon}&destination=${pts[pts.length-1]}${w?`&waypoints=${encodeURIComponent(w)}`:''}&travelmode=walking`; };
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 
 /* ---------- Hero ---------- */
@@ -224,6 +225,8 @@ const maps = {};
             <h3>${esc(s.name)}${s.hotel?' <span class="tag gold">ที่พัก</span>':''}</h3>
             <div class="zh" lang="zh-TW">${esc(s.local)}</div>
             ${s.note?`<p>${esc(s.note)}</p>`:''}
+            ${s.spots?.length?`<ol class="spots">${s.spots.map((x,m)=>`<li><a href="${gmap(x.lat,x.lon,x.local)}" target="_blank" rel="noopener"><b>${String.fromCharCode(65+m)}</b><span><span class="sn">${esc(x.name)}</span><span class="zh" lang="zh-TW">${esc(x.local)}${x.hours?` · ${esc(x.hours)}`:''}</span></span><i>📍</i></a></li>`).join('')}</ol>
+            <div class="links"><a class="walk" href="${walkUrl(s)}" target="_blank" rel="noopener">🚶 เส้นทางเดินผ่านทุกจุด</a></div>`:''}
             ${(s.hours||s.warn)?`<div class="tags">${s.hours?`<span class="tag gold">🕒 ${esc(s.hours)}</span>`:''}${s.warn?`<span class="tag">⚠️ ${esc(s.warn)}</span>`:''}</div>`:''}
             <div class="links"><a href="${gmap(s.lat,s.lon,s.local)}" target="_blank" rel="noopener">📍 Google Maps</a><a href="${amap(s.lat,s.lon,s.local)}" target="_blank" rel="noopener">🍎 Apple</a><button type="button" data-drv="${i}-${j}">🚕 การ์ดคนขับ</button></div>
           </div></li>`; }).join(''); })()}</ol>
@@ -272,6 +275,7 @@ const maps = {};
     let k=0;
     d.stops.forEach((s,j)=>{ if(s.hotel||s.skip_route) return; k++;
       markers[j]=mk(s.lat,s.lon,k,'',.15+k*.12).bindPopup(`<b>${esc(s.time)} ${esc(s.name)}</b><br><span lang="zh-TW">${esc(s.local)}</span>`); });
+    d.stops.forEach(s=>s.spots?.forEach((x,m)=>{ mk(x.lat,x.lon,String.fromCharCode(65+m),'sp',.5+m*.08).bindPopup(`<b>${String.fromCharCode(65+m)} · ${esc(x.name)}</b><br><span lang="zh-TW">${esc(x.local)}</span><br><a href="${gmap(x.lat,x.lon,x.local)}" target="_blank" rel="noopener">เปิดใน Google Maps</a>`); }));
     map.fitBounds(L.latLngBounds(line).pad(0.15));
     requestAnimationFrame(()=>{ const path=pl.getElement(); if(path && path.getTotalLength && !RM){ const len=Math.ceil(path.getTotalLength()); path.style.setProperty('--len',len); path.classList.add('route-draw'); path.addEventListener('animationend',()=>path.classList.add('done'),{once:true}); } else if(path) path.classList.add('route-draw','done'); });
     maps[i]={map,markers};
@@ -544,6 +548,7 @@ document.addEventListener('click',e=>{
 /* ---------- Credits ---------- */
 (function credits(){
   $('#creditList').innerHTML=Object.entries(P).map(([k,p])=>`<li>${esc(p.label||k)}: <a href="${esc(p.page)}" target="_blank" rel="noopener">${esc(p.title||'Wikimedia Commons')}</a> · ${esc(p.author||'ไม่ระบุ')} · ${p.licurl?`<a href="${esc(p.licurl)}" target="_blank" rel="noopener">${esc(p.license)}</a>`:esc(p.license)}</li>`).join('') || '<li>ยังไม่มีรูป</li>';
+  $('#creditCount').textContent=`· ${Object.keys(P).length} รูป`;
   $('#verLine').textContent=`เวอร์ชัน ${window.APP_VERSION}`;
 })();
 

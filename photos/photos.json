@@ -229,5 +229,16 @@
   "author": "Hal Maa",
   "license": "CC BY-SA 4.0",
   "licurl": "https://creativecommons.org/licenses/by-sa/4.0"
+ },
+ "airport2": {
+  "file": "airport2.jpg",
+  "w": 960,
+  "h": 720,
+  "label": "สนามบินเถาหยวน อาคาร 2",
+  "title": "Taoyuan International Airport Terminal 2 Departure Area 20200816.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Taoyuan_International_Airport_Terminal_2_Departure_Area_20200816.jpg",
+  "author": "Peacearth",
+  "license": "CC BY-SA 4.0",
+  "licurl": "https://creativecommons.org/licenses/by-sa/4.0"
  }
 }
