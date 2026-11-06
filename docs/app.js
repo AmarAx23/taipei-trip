@@ -216,7 +216,7 @@ const maps = {};
           <div class="mall"><a href="${gdir}" target="_blank" rel="noopener">🗺️ เปิดทุกจุดใน Google Maps</a></div>
           <small>เส้นทางเริ่มจากที่พัก · แผนที่ส่วนที่เคยเปิดตอนมีเน็ตจะจำไว้ใช้ออฟไลน์ ถ้าโหลดไม่ได้จะแสดงแผนผังแทน</small></figcaption>
       </figure>
-      ${d.transport?`<div class="note"><span>🚗</span><span><b>การเดินทางวันนี้</b> · ${esc(d.transport)}</span></div>`:''}
+      ${d.transport?`<details class="tdrop"><summary>${esc(d.transport.summary)}</summary><p>${esc(d.transport.intro)}</p>${d.transport.options.map(o=>`<div class="topt"><b>${esc(o.title)}</b> <span class="tag gold">${esc(o.tag)}</span><ul>${o.bullets.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`).join('')}<p class="fine">${esc(d.transport.footnote)}</p></details>`:''}
       ${d.rain?`<div class="note rain"><span>☔</span><span><b>แผนสำรองฝนตก</b> · ${esc(d.rain)}</span></div>`:''}
       <ol class="tl">${(()=>{ let k=0; return d.stops.map((s,j)=>{
         const p = s.skip_photo ? null : photo(s.photo); const num = (s.hotel||s.skip_route)?'':++k;
