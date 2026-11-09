@@ -214,7 +214,8 @@
           "lat": 24.9955,
           "lon": 121.5756,
           "hours": "09:00–21:00",
-          "photo": "maokong"
+          "photo": "maokong",
+          "gurl": "https://www.google.com/maps?cid=15980724169663629213"
         },
         {
           "time": "12:30",
