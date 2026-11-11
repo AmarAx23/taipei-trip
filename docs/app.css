@@ -381,6 +381,15 @@ html.mfs-open .bnav{display:none}
 .emerg .tx small,.tips .tx small{display:block;color:var(--muted);font-size:12px;line-height:1.4}
 .emerg .num{display:block;color:var(--red);font-weight:700;font-size:15px;user-select:all;font-variant-numeric:tabular-nums}
 
+/* Phrases: more toggle */
+.pmore{margin-top:8px}
+.pmore summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13.5px;font-weight:600;color:var(--navy-2);background:var(--gold-soft);border:1px solid var(--line);border-radius:999px;padding:8px 14px}
+.pmore summary::-webkit-details-marker{display:none}
+.pmore summary::after{content:"▾";transition:transform .25s}
+.pmore[open] summary::after{transform:rotate(180deg)}
+.pmore .pm-close,.pmore[open] .pm-open{display:none}
+.pmore[open] .pm-close{display:inline}
+.pmore[open] summary{margin-bottom:8px}
 /* Emergency dropdown */
 .edrop{margin-top:22px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:0 14px}
 .edrop summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 0}

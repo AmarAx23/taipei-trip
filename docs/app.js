@@ -402,8 +402,16 @@ function bigShow(text, sub){ $('#bigText').textContent=text; $('#bigSub').textCo
     const k=opts.findIndex(o=>o.key===key || o.alias?.includes(key) || (key==='hotel'&&o.key==='hotel')); if(k<0) return;
     sel.value=k; show(); $('#driver').scrollIntoView({behavior:RM?'auto':'smooth',block:'center'}); });
 
-  $('#phrases').innerHTML=T.phrases.map((p,k)=>`<li class="rv" data-say="${k}"><div class="tx"><span class="zh" lang="zh-TW">${esc(p.zh)}</span><span class="th">${esc(p.th)} · ${esc(p.py)}</span></div><button type="button" class="say" aria-label="ฟังเสียง ${esc(p.th)}">🔊</button></li>`).join('');
-  $('#phrases').addEventListener('click',e=>{ const li=e.target.closest('[data-say]'); if(!li) return; li.classList.add('speaking'); speak(T.phrases[li.dataset.say].zh, LL, ()=>li.classList.remove('speaking')); setTimeout(()=>li.classList.remove('speaking'),4000); });
+  /* Most-used phrases stay open; the rest sit under "ดูเพิ่ม" */
+  const TOP=['謝謝','這個多少錢？','我要這個','廁所在哪裡？'];
+  const row=(p,k)=>`<li data-say="${k}"><div class="tx"><span class="zh" lang="zh-TW">${esc(p.zh)}</span><span class="th">${esc(p.th)} · ${esc(p.py)}</span></div><button type="button" class="say" aria-label="ฟังเสียง ${esc(p.th)}">🔊</button></li>`;
+  const idx=T.phrases.map((p,k)=>k);
+  const top=idx.filter(k=>TOP.includes(T.phrases[k].zh)).sort((a,b)=>TOP.indexOf(T.phrases[a].zh)-TOP.indexOf(T.phrases[b].zh));
+  const rest=idx.filter(k=>!top.includes(k));
+  $('#phrases').innerHTML=top.map(k=>row(T.phrases[k],k)).join('');
+  $('#phrasesMore').innerHTML=rest.map(k=>row(T.phrases[k],k)).join('');
+  $('#phraseMore').innerHTML=`<span class="pm-open">ดูเพิ่มอีก ${rest.length} ประโยค</span><span class="pm-close">ซ่อนประโยคเพิ่มเติม</span>`;
+  $('#phraseBox').addEventListener('click',e=>{ const li=e.target.closest('[data-say]'); if(!li) return; li.classList.add('speaking'); speak(T.phrases[li.dataset.say].zh, LL, ()=>li.classList.remove('speaking')); setTimeout(()=>li.classList.remove('speaking'),4000); });
 
   const ic={'ตำรวจ':'👮','รถพยาบาล / ดับเพลิง':'🚑'};
   const c=T.consulate;
@@ -592,7 +600,7 @@ document.addEventListener('click',e=>{
 (function reveal(){
   if(RM || !('IntersectionObserver' in window)){ $$('.ph.cur').forEach(p=>p.classList.add('open')); return; }
   const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.remove('pre'); e.target.classList.add('open'); io.unobserve(e.target); } }),{rootMargin:'0px 0px -10% 0px'});
-  $$('.card, .rv:not(.emerg li), .ph.cur, .ex, .phrases li').forEach(el=>{ const r=el.getBoundingClientRect(); if(el.classList.contains('ph')){ io.observe(el); return; } if(r.top>innerHeight){ el.classList.add('rv','pre'); io.observe(el); } });
+  $$('.card, .rv:not(.emerg li), .ph.cur, .ex, #phrases li').forEach(el=>{ const r=el.getBoundingClientRect(); if(el.classList.contains('ph')){ io.observe(el); return; } if(r.top>innerHeight){ el.classList.add('rv','pre'); io.observe(el); } });
 })();
 
 /* ---------- Install as app ---------- */
