@@ -443,10 +443,11 @@ html.mfs-open .bnav{display:none}
 /* Print: A4 card sheet built from data */
 .print-sheet{display:none}
 @media print{
-  @page{size:A4;margin:11mm}
+  /* Zero page margin stops the browser printing date, title, URL and page numbers */
+  @page{size:A4;margin:0}
   html,body{background:#fff!important;color:#111}
   body>*:not(.print-sheet),body::before,body::after{display:none!important}
-  .print-sheet{display:block;font-family:var(--body);font-size:10pt;line-height:1.4;color:#1B2730;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .print-sheet{display:block;padding:11mm;-webkit-box-decoration-break:clone;box-decoration-break:clone;font-family:var(--body);font-size:10pt;line-height:1.4;color:#1B2730;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .ps-cover{background:#0F3A54;color:#fff;border-radius:12pt;padding:14pt 16pt;margin-bottom:10pt}
   .ps-cover small{letter-spacing:1.2pt;color:#EBCB82;font-weight:600;font-size:8pt}
   .ps-cover h1{font-family:var(--head);font-size:22pt;margin:2pt 0;color:#fff}
@@ -459,7 +460,8 @@ html.mfs-open .bnav{display:none}
   .ps-card li{margin:0 0 3pt}
   .ps-card .z{font-family:var(--zh);color:#6B7680;font-size:9pt}
   html.print-imgs .print-sheet{font-size:0}
-  .ps-img{height:274mm;display:flex;align-items:center;justify-content:center;break-after:page;page-break-after:always}
+  html.print-imgs .print-sheet{padding:0}
+  .ps-img{height:297mm;padding:12mm;box-sizing:border-box;display:flex;align-items:center;justify-content:center;break-after:page;page-break-after:always}
   .ps-img:last-child{break-after:auto;page-break-after:auto}
   .ps-img img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;border-radius:0}
 }
