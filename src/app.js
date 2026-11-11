@@ -407,9 +407,9 @@ function bigShow(text, sub){ $('#bigText').textContent=text; $('#bigSub').textCo
 
   const ic={'ตำรวจ':'👮','รถพยาบาล / ดับเพลิง':'🚑'};
   const c=T.consulate;
-  $('#emerg').innerHTML=T.emergency.map(e=>`<li class="rv"><span class="ic">${ic[e.label]||'🌐'}</span><div class="tx"><b>${esc(e.label)}</b><span class="num">${esc(e.num)}</span></div></li>`).join('')
-    + `<li class="rv"><span class="ic">🇹🇭</span><div class="tx"><b>${esc(c.name)}</b><small lang="zh-TW">${esc(c.name_local)} · ${esc(c.address)}</small><span class="num">${esc(c.phone)}</span><small>${esc(c.note)} · <a href="${esc(c.url)}" target="_blank" rel="noopener">เว็บไซต์</a></small></div></li>`
-    + `<li class="rv"><span class="ic">🏥</span><div class="tx"><b>${esc(hp.name)}</b><small lang="zh-TW">${esc(hp.name_local)}</small><small>${esc(hp.address)} · ${esc(hp.note)}</small><div class="links"><a href="${gmap(hp.lat,hp.lon,hp.address_local)}" target="_blank" rel="noopener">📍 แผนที่</a><button type="button" data-drv="hospital">🚕 การ์ดคนขับ</button></div></div></li>`;
+  $('#emerg').innerHTML=T.emergency.map(e=>`<li><span class="ic">${ic[e.label]||'🌐'}</span><div class="tx"><b>${esc(e.label)}</b><span class="num">${esc(e.num)}</span></div></li>`).join('')
+    + `<li><span class="ic">🇹🇭</span><div class="tx"><b>${esc(c.name)}</b><small lang="zh-TW">${esc(c.name_local)} · ${esc(c.address)}</small><span class="num">${esc(c.phone)}</span><small>${esc(c.note)} · <a href="${esc(c.url)}" target="_blank" rel="noopener">เว็บไซต์</a></small></div></li>`
+    + `<li><span class="ic">🏥</span><div class="tx"><b>${esc(hp.name)}</b><small lang="zh-TW">${esc(hp.name_local)}</small><small>${esc(hp.address)} · ${esc(hp.note)}</small><div class="links"><a href="${gmap(hp.lat,hp.lon,hp.address_local)}" target="_blank" rel="noopener">📍 แผนที่</a><button type="button" data-drv="hospital">🚕 การ์ดคนขับ</button></div></div></li>`;
 
   /* Translator with chat bubbles */
   let dir='th';
@@ -592,7 +592,7 @@ document.addEventListener('click',e=>{
 (function reveal(){
   if(RM || !('IntersectionObserver' in window)){ $$('.ph.cur').forEach(p=>p.classList.add('open')); return; }
   const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.remove('pre'); e.target.classList.add('open'); io.unobserve(e.target); } }),{rootMargin:'0px 0px -10% 0px'});
-  $$('.card, .rv, .ph.cur, .ex, .phrases li, .emerg li').forEach(el=>{ const r=el.getBoundingClientRect(); if(el.classList.contains('ph')){ io.observe(el); return; } if(r.top>innerHeight){ el.classList.add('rv','pre'); io.observe(el); } });
+  $$('.card, .rv:not(.emerg li), .ph.cur, .ex, .phrases li').forEach(el=>{ const r=el.getBoundingClientRect(); if(el.classList.contains('ph')){ io.observe(el); return; } if(r.top>innerHeight){ el.classList.add('rv','pre'); io.observe(el); } });
 })();
 
 /* ---------- Install as app ---------- */
