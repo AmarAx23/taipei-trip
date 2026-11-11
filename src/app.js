@@ -473,7 +473,20 @@ document.addEventListener('click',e=>{
 
 /* ---------- Summary images (canvas) ---------- */
 (function summary(){
-  let useLocal=false;
+  let useLocal=false, lastFigs=[];
+  /* Print summary images as A4 pages (one image per page) */
+  async function printImages(list){
+    if(!list.length) return;
+    const sheet=$('#printSheet'), saved=sheet.innerHTML;
+    sheet.innerHTML=list.map(f=>`<div class="ps-img"><img src="${f.url}" alt="${esc(f.label)}"></div>`).join('');
+    document.documentElement.classList.add('print-imgs');
+    await Promise.all([...sheet.querySelectorAll('img')].map(im=>im.complete?0:new Promise(r=>{im.onload=im.onerror=r;})));
+    const restore=()=>{ document.documentElement.classList.remove('print-imgs'); sheet.innerHTML=saved; removeEventListener('afterprint',restore); };
+    addEventListener('afterprint',restore);
+    window.print();
+    setTimeout(()=>{ if(document.documentElement.classList.contains('print-imgs') && !matchMedia('print').matches) restore(); },1500);
+  }
+  $('#sumPrintAll').onclick=()=>printImages(lastFigs);
   $$('#sumLang button').forEach(b=>b.onclick=()=>{ useLocal=b.dataset.l==='zh'; $$('#sumLang button').forEach(x=>x.classList.toggle('on',x===b)); build(); });
   $('#sumBtn').onclick=()=>{ $('#sumSheet').hidden=false; document.documentElement.classList.add('mfs-open'); build(); };
   function wrap(ctx,text,maxW){ const out=[]; let line=''; for(const ch of [...text]){ if(ctx.measureText(line+ch).width>maxW && line){ out.push(line); line=ch; } else line+=ch; } if(line) out.push(line); return out; }
@@ -538,8 +551,12 @@ document.addEventListener('click',e=>{
       const c=await draw(kind,i); const blob=await new Promise(r=>c.toBlob(r,'image/png'));
       figs.push({label,url:URL.createObjectURL(blob),blob,name:`taipei-${kind==='all'?'overview':'day'+(i+1)}${useLocal?'-zh':''}.png`});
     }
-    grid.innerHTML=figs.map((f,k)=>`<figure style="animation-delay:${k*60}ms"><img src="${f.url}" alt="${esc(f.label)}"><figcaption>${esc(f.label)}</figcaption><div class="links"><a href="${f.url}" download="${f.name}">💾 บันทึก</a><button type="button" data-share="${k}">📤 แชร์</button></div></figure>`).join('');
-    grid.onclick=async e=>{ const k=e.target.closest('[data-share]')?.dataset.share; if(k==null) return; const f=figs[k];
+    grid.innerHTML=figs.map((f,k)=>`<figure style="animation-delay:${k*60}ms"><img src="${f.url}" alt="${esc(f.label)}" data-zoom="${k}"><figcaption>${esc(f.label)}</figcaption><div class="links"><a href="${f.url}" download="${f.name}">💾 บันทึก</a><button type="button" data-share="${k}">📤 แชร์</button><button type="button" data-print="${k}">🖨️ พิมพ์ A4</button></div></figure>`).join('');
+    lastFigs=figs;
+    grid.onclick=async e=>{
+      const pr=e.target.closest('[data-print]'); if(pr){ printImages([figs[+pr.dataset.print]]); return; }
+      const z=e.target.closest('[data-zoom]'); if(z){ const f=figs[+z.dataset.zoom]; $('#lbImg').src=f.url; $('#lbImg').alt=f.label; $('#lbCap').textContent=f.label; $('#lightbox').hidden=false; return; }
+      const k=e.target.closest('[data-share]')?.dataset.share; if(k==null) return; const f=figs[k];
       const file=new File([f.blob],f.name,{type:'image/png'});
       if(navigator.canShare?.({files:[file]})){ try{ await navigator.share({files:[file],title:f.label}); }catch(err){} } else toast('เครื่องนี้แชร์ไฟล์ไม่ได้ ใช้ปุ่มบันทึกแทน'); };
   }
