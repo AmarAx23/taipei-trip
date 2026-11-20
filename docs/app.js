@@ -492,12 +492,16 @@ document.addEventListener('click',e=>{
   /* Print summary images as A4 pages (one image per page) */
   async function printImages(list){
     if(!list.length) return;
+    toast('กำลังเตรียมหน้า A4…',4000);
+    const urls=[];
+    for(const f of list){ const c=await draw(f.kind,f.i,true); urls.push(URL.createObjectURL(await new Promise(r=>c.toBlob(r,'image/png')))); }
     const sheet=$('#printSheet'), saved=sheet.innerHTML;
-    sheet.innerHTML=list.map(f=>`<div class="ps-img"><img src="${f.url}" alt="${esc(f.label)}"></div>`).join('');
+    sheet.innerHTML=urls.map((u,k)=>`<div class="ps-img"><img src="${u}" alt="${esc(list[k].label)}"></div>`).join('');
     document.documentElement.classList.add('print-imgs');
     await Promise.all([...sheet.querySelectorAll('img')].map(im=>im.complete?0:new Promise(r=>{im.onload=im.onerror=r;})));
-    const restore=()=>{ document.documentElement.classList.remove('print-imgs'); sheet.innerHTML=saved; removeEventListener('afterprint',restore); };
+    const restore=()=>{ document.documentElement.classList.remove('print-imgs'); sheet.innerHTML=saved; urls.forEach(u=>URL.revokeObjectURL(u)); removeEventListener('afterprint',restore); };
     addEventListener('afterprint',restore);
+    $('#toast').hidden=true;
     window.print();
     setTimeout(()=>{ if(document.documentElement.classList.contains('print-imgs') && !matchMedia('print').matches) restore(); },1500);
   }
@@ -521,62 +525,67 @@ document.addEventListener('click',e=>{
   /* Day image: a stack of photo cards with a time pill on each, like the Shanghai trip */
   function rr(x,X,Y,w,h,r){ x.beginPath(); if(x.roundRect) x.roundRect(X,Y,w,h,r); else x.rect(X,Y,w,h); }
   function fit(x,t,max){ if(x.measureText(t).width<=max) return t; let s=[...t]; while(s.length && x.measureText(s.join('')+'…').width>max) s.pop(); return s.join('')+'…'; }
-  async function drawDay(i){
-    const d=T.days[i], dt=parseD(d.date), stops=d.stops;
+  /* A4 mode (a4=true) lays the same cards out to fill exactly one A4 page: cards grow or shrink to fit, two columns when a day has many stops */
+  async function drawDay(i, a4=false){
+    const d=T.days[i], dt=parseD(d.date), stops=d.stops, n=stops.length;
     const zh='"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';
-    const W=1080, PAD=56, HEAD=380, BLOCK=262, H=HEAD+stops.length*BLOCK+150;
+    const W=a4?1240:1080, PAD=a4?60:56, HEAD=a4?400:380, FOOT=a4?130:150;
+    const cols=a4&&n>5?2:1, rows=Math.ceil(n/cols);
+    const H=a4?Math.round(W*297/210):HEAD+n*262+FOOT;
+    const BLOCK=a4?(H-HEAD-FOOT)/rows:262;
+    const CH=a4?Math.max(120,Math.min(cols>1?230:250,BLOCK-64)):190;
+    const sc=CH/190, GAP=36, CW=(W-2*PAD-(cols-1)*GAP)/cols;
     const c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d');
-    const RED='#B0242E', NAVY='#1D5C82', GOLD='#B5872F', INK='#1B2730', MUTED='#6B7680';
+    const RED='#B0242E', NAVY='#1D5C82', GOLD='#B5872F', MUTED='#6B7680';
     x.fillStyle='#F4F1EA'; x.fillRect(0,0,W,H);
-    // red/cream candy stripe along the top edge
     x.save(); x.beginPath(); x.rect(0,0,W,22); x.clip(); x.fillStyle='#fff'; x.fillRect(0,0,W,22); x.fillStyle=RED;
     for(let k=-30;k<W+30;k+=34){ x.beginPath(); x.moveTo(k,22); x.lineTo(k+14,0); x.lineTo(k+28,0); x.lineTo(k+14,22); x.fill(); } x.restore();
-    // header band with the day's first photo
     const key=stops.find(s=>s.photo&&!s.hotel&&!s.skip_route&&P[s.photo])?.photo;
-    const hi=key?await loadImg(P[key].file):null;
-    x.save(); rr(x,PAD-16,50,W-2*PAD+32,290,34); x.clip(); x.fillStyle='#0F3A54'; x.fillRect(0,50,W,290);
-    if(hi){ const k=Math.max((W-2*PAD+32)/hi.width,290/hi.height); x.drawImage(hi,(W-hi.width*k)/2,50+(290-hi.height*k)/2,hi.width*k,hi.height*k); }
-    const g=x.createLinearGradient(0,50,0,340); g.addColorStop(0,'rgba(10,38,58,.55)'); g.addColorStop(1,'rgba(110,24,32,.9)'); x.fillStyle=g; x.fillRect(0,50,W,290); x.restore();
-    x.fillStyle='#EBCB82'; x.font='600 26px "Noto Sans Thai"'; x.fillText(`${T.trip.name_local} · ${T.trip.name}`,PAD+18,104);
-    x.fillStyle='#fff'; x.font='700 92px Kanit'; x.fillText(`วันที่ ${i+1}`,PAD+18,210);
-    x.font='600 36px Kanit'; x.fillText(`${WDL[dt.getUTCDay()]} ${dt.getUTCDate()} ${MO[dt.getUTCMonth()]} ${dt.getUTCFullYear()}`,PAD+18,266);
+    const hi=key?await loadImg(P[key].file):null, HB=HEAD-90;
+    x.save(); rr(x,PAD-16,50,W-2*PAD+32,HB,34); x.clip(); x.fillStyle='#0F3A54'; x.fillRect(0,50,W,HB);
+    if(hi){ const k=Math.max((W-2*PAD+32)/hi.width,HB/hi.height); x.drawImage(hi,(W-hi.width*k)/2,50+(HB-hi.height*k)/2,hi.width*k,hi.height*k); }
+    const g=x.createLinearGradient(0,50,0,50+HB); g.addColorStop(0,'rgba(10,38,58,.55)'); g.addColorStop(1,'rgba(110,24,32,.9)'); x.fillStyle=g; x.fillRect(0,50,W,HB); x.restore();
+    const hy=50+HB;
+    x.fillStyle='#EBCB82'; x.font='600 26px "Noto Sans Thai"'; x.fillText(`${T.trip.name_local} · ${T.trip.name}`,PAD+18,hy-236);
+    x.fillStyle='#fff'; x.font='700 92px Kanit'; x.fillText(`วันที่ ${i+1}`,PAD+18,hy-130);
+    x.font='600 36px Kanit'; x.fillText(`${WDL[dt.getUTCDay()]} ${dt.getUTCDate()} ${MO[dt.getUTCMonth()]} ${dt.getUTCFullYear()}`,PAD+18,hy-74);
     x.font=useLocal?`600 30px ${zh}`:'500 30px "Noto Sans Thai"'; x.fillStyle='rgba(255,255,255,.9)';
-    x.fillText(fit(x,useLocal?stops.filter(s=>!s.hotel&&!s.skip_route).slice(0,3).map(s=>s.local).join(' · '):d.title,W-2*PAD-40),PAD+18,312);
-    // cards
-    let y=HEAD; const imgs=await Promise.all(stops.map(s=>(!s.skip_photo&&s.photo&&P[s.photo])?loadImg(P[s.photo].file):null));
+    x.fillText(fit(x,useLocal?stops.filter(s=>!s.hotel&&!s.skip_route).slice(0,3).map(s=>s.local).join(' · '):d.title,W-2*PAD-40),PAD+18,hy-28);
+    const imgs=await Promise.all(stops.map(s=>(!s.skip_photo&&s.photo&&P[s.photo])?loadImg(P[s.photo].file):null));
+    const top0=HEAD+(BLOCK-CH-28)/2;
     stops.forEach((s,j)=>{
-      const col=s.hotel?NAVY:(j%2?NAVY:RED), cy=y+28, CH=190, CW=W-2*PAD;
-      if(j>0){ x.strokeStyle=GOLD; x.lineWidth=4; x.setLineDash([4,10]); x.beginPath(); x.moveTo(W/2,y-40); x.lineTo(W/2,y); x.stroke(); x.setLineDash([]); }
-      x.save(); x.shadowColor='rgba(15,58,84,.12)'; x.shadowBlur=24; x.shadowOffsetY=8; rr(x,PAD,cy,CW,CH,30); x.fillStyle='#fff'; x.fill(); x.restore();
-      rr(x,PAD,cy,CW,CH,30); x.lineWidth=5; x.strokeStyle=col; x.stroke();
-      // thumbnail or icon
-      const TX=PAD+26, TY=cy+31, TW=200, TH=128, im=imgs[j];
-      x.save(); rr(x,TX,TY,TW,TH,20); x.clip();
+      const col=s.hotel?NAVY:(j%2?NAVY:RED), ci=Math.floor(j/rows), ri=j%rows;
+      const X0=PAD+ci*(CW+GAP), cy=(a4?top0:HEAD)+ri*BLOCK+28, mid=X0+CW/2;
+      if(ri>0){ x.strokeStyle=GOLD; x.lineWidth=4; x.setLineDash([4,10]); x.beginPath(); x.moveTo(mid,cy-BLOCK+CH); x.lineTo(mid,cy-28); x.stroke(); x.setLineDash([]); }
+      x.save(); x.shadowColor='rgba(15,58,84,.12)'; x.shadowBlur=24; x.shadowOffsetY=8; rr(x,X0,cy,CW,CH,30); x.fillStyle='#fff'; x.fill(); x.restore();
+      rr(x,X0,cy,CW,CH,30); x.lineWidth=5; x.strokeStyle=col; x.stroke();
+      const V=cols>1;   // two-column A4: photo on top, text below
+      const TH=V?Math.round(CH*0.42):Math.round(128*sc), TW=V?Math.round(CW-44):Math.round(200*Math.min(sc,1.2));
+      const TX=X0+22, TY=V?cy+30:cy+(CH-TH)/2+6, im=imgs[j];
+      x.save(); rr(x,TX,TY,TW,TH,18); x.clip();
       if(im){ const k=Math.max(TW/im.width,TH/im.height); x.drawImage(im,TX+(TW-im.width*k)/2,TY+(TH-im.height*k)/2,im.width*k,im.height*k); }
-      else { x.fillStyle=s.hotel?'#E4EEF5':'#FBEDEE'; x.fillRect(TX,TY,TW,TH); x.font='64px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif'; x.textAlign='center'; x.textBaseline='middle'; x.fillText(s.hotel?'🏨':(s.skip_route?'✈️':'📍'),TX+TW/2,TY+TH/2+4); x.textAlign='left'; x.textBaseline='alphabetic'; }
+      else { x.fillStyle=s.hotel?'#E4EEF5':'#FBEDEE'; x.fillRect(TX,TY,TW,TH); x.font=`${Math.round(Math.min(TH*0.55,64))}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif`; x.textAlign='center'; x.textBaseline='middle'; x.fillText(s.hotel?'🏨':(s.skip_route?'✈️':'📍'),TX+TW/2,TY+TH/2+4); x.textAlign='left'; x.textBaseline='alphabetic'; }
       x.restore();
-      // text
-      const TXT=TX+TW+30, MAX=W-PAD-26-TXT;
-      x.fillStyle='#0F3A54'; x.font=useLocal?`700 38px ${zh}`:'600 38px Kanit'; x.fillText(fit(x,useLocal?s.local:(s.name||''),MAX),TXT,cy+82);
-      x.fillStyle=MUTED; x.font=useLocal?'400 25px "Noto Sans Thai"':'400 25px "Noto Sans Thai"';
+      const fs=V?1:Math.min(1.15,Math.max(.8,sc)), TXT=V?TX:TX+TW+24, MAX=V?TW:X0+CW-22-TXT;
+      const ty=V?TY+TH+Math.round(40*fs):TY+Math.round(34*fs);
+      x.fillStyle='#0F3A54'; x.font=useLocal?`700 ${Math.round(36*fs)}px ${zh}`:`600 ${Math.round(36*fs)}px Kanit`; x.fillText(fit(x,useLocal?s.local:(s.name||''),MAX),TXT,ty);
+      x.fillStyle=MUTED; x.font=`400 ${Math.round(24*fs)}px "Noto Sans Thai"`;
       const sub=useLocal?(s.name||''):[s.local,s.note].filter(Boolean).join(' · ');
-      { const ls=wrap(x,sub,MAX); ls.slice(0,2).forEach((l,m)=>x.fillText(m===1&&ls.length>2?fit(x,l+' …',MAX):l,TXT,cy+124+m*34)); }
-      // time pill on the top border
-      x.font='600 30px Kanit'; const pw=x.measureText(s.time).width+56;
-      rr(x,(W-pw)/2,cy-28,pw,52,26); x.fillStyle=col; x.fill(); x.lineWidth=5; x.strokeStyle='#F4F1EA'; x.stroke();
-      x.fillStyle='#fff'; x.textAlign='center'; x.fillText(s.time,W/2,cy+9); x.textAlign='left';
-      y+=BLOCK;
+      const lh=Math.round(32*fs), maxL=Math.max(1,Math.floor((cy+CH-14-(ty+Math.round(40*fs)))/lh)+1);
+      const ls=wrap(x,sub,MAX); ls.slice(0,Math.min(maxL,3)).forEach((l,m,arr)=>x.fillText(m===arr.length-1&&ls.length>arr.length?fit(x,l+' …',MAX):l,TXT,ty+Math.round(40*fs)+m*lh));
+      x.font=`600 ${Math.round(30*Math.min(fs,1.05))}px Kanit`; const pw=x.measureText(s.time).width+56;
+      rr(x,mid-pw/2,cy-28,pw,52,26); x.fillStyle=col; x.fill(); x.lineWidth=5; x.strokeStyle='#F4F1EA'; x.stroke();
+      x.fillStyle='#fff'; x.textAlign='center'; x.fillText(s.time,mid,cy+9); x.textAlign='left';
     });
-    // footer
     x.fillStyle=GOLD; x.font='600 24px Kanit'; x.textAlign='center';
-    x.fillText(`🏮 ${T.trip.name} · ${T.trip.name_local} · ${fmtD(T.trip.start)}–${fmtD(T.trip.end)} ${dt.getUTCFullYear()}`,W/2,H-82);
-    x.fillStyle=MUTED; x.font='400 20px "Noto Sans Thai"'; x.fillText(`ภาพสถานที่จาก Wikimedia Commons · ${location.host}${location.pathname}`,W/2,H-46); x.textAlign='left';
+    x.fillText(`🏮 ${T.trip.name} · ${T.trip.name_local} · ${fmtD(T.trip.start)}–${fmtD(T.trip.end)} ${dt.getUTCFullYear()}`,W/2,H-FOOT+70);
+    x.fillStyle=MUTED; x.font='400 20px "Noto Sans Thai"'; x.fillText(`ภาพสถานที่จาก Wikimedia Commons · ${location.host}${location.pathname}`,W/2,H-FOOT+104); x.textAlign='left';
     return c;
   }
-  async function draw(kind, i){
+  async function draw(kind, i, a4=false){
     try{ await Promise.all(['600 64px Kanit','700 64px Kanit','400 30px "Noto Sans Thai"','600 30px "Noto Sans Thai"'].map(f=>document.fonts.load(f))); }catch(e){}
-    if(kind==='day') return drawDay(i);
-    const W=1080,H=1350,c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d');
+    if(kind==='day') return drawDay(i,a4);
+    const W=1080,H=a4?Math.round(1080*297/210):1350,c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d');
     const zh='"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';
     const nm=s=>useLocal?s.local:s.name;
     x.fillStyle='#F4F1EA'; x.fillRect(0,0,W,H);
@@ -617,7 +626,7 @@ document.addEventListener('click',e=>{
         x.fillStyle='#1B2730'; x.font=useLocal?`500 30px ${zh}`:'400 30px "Noto Sans Thai"';
         const lines=wrap(x,d.stops.filter(s=>!s.hotel&&!s.skip_route).map(nm).join(' → '),820).slice(0,2);
         lines.forEach((l,m)=>x.fillText(l,180,y+38+m*40));
-        y+=96+lines.length*40;
+        y+=96+lines.length*40+(a4?Math.round((H-1350)/T.days.length):0);
       });
       const f=T.flights; x.fillStyle='#B0242E'; x.font='600 30px Kanit';
       x.fillText(`✈ ${f[0].code} ${f[0].from}→${f[0].to} ${f[0].dep}   ·   ${f[f.length-1].code} ${f[f.length-1].from}→${f[f.length-1].to} ${f[f.length-1].dep}`,80,H-90);
@@ -631,7 +640,7 @@ document.addEventListener('click',e=>{
     const figs=[];
     for(const [label,kind,i] of items){
       const c=await draw(kind,i); const blob=await new Promise(r=>c.toBlob(r,'image/png'));
-      figs.push({label,url:URL.createObjectURL(blob),blob,name:`taipei-${kind==='all'?'overview':'day'+(i+1)}${useLocal?'-zh':''}.png`});
+      figs.push({label,kind,i,url:URL.createObjectURL(blob),blob,name:`taipei-${kind==='all'?'overview':'day'+(i+1)}${useLocal?'-zh':''}.png`});
     }
     grid.innerHTML=figs.map((f,k)=>`<figure style="animation-delay:${k*60}ms"><img src="${f.url}" alt="${esc(f.label)}" data-zoom="${k}"><figcaption>${esc(f.label)}</figcaption><div class="links"><a href="${f.url}" download="${f.name}">💾 บันทึก</a><button type="button" data-share="${k}">📤 แชร์</button><button type="button" data-print="${k}">🖨️ พิมพ์ A4</button></div></figure>`).join('');
     lastFigs=figs;

@@ -491,7 +491,7 @@ html.mfs-open .bnav{display:none}
   .ps-card .z{font-family:var(--zh);color:#6B7680;font-size:9pt}
   html.print-imgs .print-sheet{font-size:0}
   html.print-imgs .print-sheet{padding:0}
-  .ps-img{height:297mm;padding:12mm;box-sizing:border-box;display:flex;align-items:center;justify-content:center;break-after:page;page-break-after:always}
+  .ps-img{height:297mm;width:210mm;padding:0;overflow:hidden;box-sizing:border-box;display:flex;align-items:center;justify-content:center;break-after:page;page-break-after:always}
   .ps-img:last-child{break-after:auto;page-break-after:auto}
-  .ps-img img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;border-radius:0}
+  .ps-img img{width:100%;height:100%;object-fit:contain;border-radius:0;display:block}
 }
