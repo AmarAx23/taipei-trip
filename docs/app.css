@@ -196,7 +196,7 @@ html.ios-app .dtabs{top:env(safe-area-inset-top,0px)}
 .note{display:flex;gap:10px;background:var(--gold-soft);border-radius:14px;padding:10px 12px;font-size:13px;margin-top:12px}
 
 /* Day map */
-.dmap{position:relative;margin:14px 0 0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--bg)}
+.dmap{position:relative;z-index:0;margin:14px 0 0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--bg)}
 .dmap .lmap{height:230px;background:var(--bg);z-index:0}
 .dmap .leaflet-tile-pane{filter:saturate(.7) sepia(.1) brightness(1.03)}
 :root[data-theme="dark"] .dmap .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.9) contrast(.85) saturate(.55)}
@@ -475,6 +475,22 @@ html.mfs-open .bnav{display:none}
 
 /* Print: A4 card sheet built from data */
 .print-sheet{display:none}
+
+/* Short screens (phone turned sideways): slim nav, compact hero, thinner day tabs */
+@media (orientation:landscape) and (max-height:500px){
+  .wrap{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
+  .bnav{bottom:calc(6px + env(safe-area-inset-bottom,0px));padding:4px;border-radius:16px;max-width:620px}
+  .bnav a{display:flex;align-items:center;justify-content:center;gap:5px;font-size:12px;padding:5px 0;border-radius:12px}
+  .bnav a i{display:inline;font-size:16px;line-height:1}
+  .bnav a.on i{transform:scale(1.08)}
+  .hero{padding:44px 24px 14px}
+  .hero h1{font-size:30px}
+  .cd{margin-top:12px}
+  .fc{width:30px;height:42px;line-height:42px;font-size:26px}
+  .chips{margin-top:10px}
+  .dtabs{padding:5px 2px}
+  .dtab{padding-block:4px}
+}
 @media print{
   /* Zero page margin stops the browser printing date, title, URL and page numbers */
   @page{size:A4;margin:0}
