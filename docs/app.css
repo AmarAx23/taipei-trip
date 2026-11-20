@@ -111,8 +111,8 @@ html.ios-app body::after{content:"";position:fixed;top:0;left:0;right:0;height:e
 .cd-msg:empty{display:none}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
 .chip{font-size:12.5px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);padding:5px 11px;border-radius:999px;flex:1 1 auto;text-align:center;white-space:nowrap}
-.hero-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.14)}
-.hbtn{font-size:13px;font-weight:600;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.28);border-radius:12px;padding:8px 4px;cursor:pointer;display:flex;gap:6px;align-items:center;justify-content:center}
+.hero-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.14)}
+.hbtn{font-size:12.5px;flex-wrap:wrap;line-height:1.25;font-weight:600;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.28);border-radius:12px;padding:8px 4px;cursor:pointer;display:flex;gap:6px;align-items:center;justify-content:center}
 .hbtn:active{background:rgba(255,255,255,.15)}
 .install{display:flex;align-items:center;gap:12px;width:100%;margin-top:10px;padding:10px 14px;border-radius:14px;border:1px solid rgba(235,203,130,.55);background:linear-gradient(rgba(235,203,130,.16),rgba(235,203,130,.16)),rgba(12,40,60,.85);color:#fff;text-align:left;cursor:pointer;animation:fadeUp .5s ease both}
 .install>span:first-child{font-size:22px}
@@ -476,6 +476,42 @@ html.mfs-open .bnav{display:none}
 /* Print: A4 card sheet built from data */
 .print-sheet{display:none}
 
+
+/* Stamp book */
+.evb{position:relative}
+.evb>.links .been{background:var(--red);border-color:var(--red);color:#fff}
+.evb>.links .been.done{background:transparent;color:var(--red)}
+.seal{position:absolute;right:2px;bottom:34px;width:92px;height:92px;pointer-events:none;opacity:0;z-index:2}
+.seal.on{animation:press .55s cubic-bezier(.2,.9,.25,1.25) forwards}
+.seal.still{opacity:.9;transform:rotate(-12deg)}
+@keyframes press{0%{opacity:0;transform:scale(2.4) rotate(-28deg)}55%{opacity:1;transform:scale(.92) rotate(-11deg)}75%{transform:scale(1.04) rotate(-13deg)}100%{opacity:.9;transform:scale(1) rotate(-12deg)}}
+.evb.thump{animation:thump .35s ease}
+@keyframes thump{35%{transform:scale(.985) translateY(2px)}}
+#stampCount{font-size:10.5px;opacity:.85;width:100%;display:block}
+#stampCount:empty{display:none}
+.stamp-in{max-width:520px}
+.book{background:#FBF7EE;border:1px solid var(--line);border-radius:20px;padding:18px 16px 16px;position:relative;box-shadow:0 10px 26px rgba(15,58,84,.10);color:#1d2430}
+.book::before{content:"";position:absolute;inset:8px;border:1.5px solid rgba(176,36,46,.25);border-radius:14px;pointer-events:none}
+.bk-h{display:flex;justify-content:space-between;align-items:flex-end;gap:10px}
+.bk-h h2{font-size:22px;color:#B0242E}
+.bk-h .zh{font-size:13px;letter-spacing:.25em;color:#6B7380}
+.bk-score{text-align:right;font-family:var(--head);line-height:1.1;color:#B0242E}
+.bk-score b{font-size:34px}
+.bk-score small{display:block;font:400 12px var(--body);color:#6B7380}
+.bk-bar{height:8px;border-radius:9px;background:rgba(176,36,46,.12);margin:12px 0 4px;overflow:hidden}
+.bk-bar i{display:block;height:100%;background:linear-gradient(90deg,#B0242E,#D9573C);border-radius:9px;transition:width .7s cubic-bezier(.3,1,.4,1)}
+.bk-day{margin-top:14px}
+.bk-day h4{font:600 13.5px var(--head);color:#0F3A54;margin:0 0 6px;display:flex;justify-content:space-between}
+.bk-day h4 span{color:#6B7380;font-weight:500}
+.bk-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.bk-slot{aspect-ratio:1;display:grid;place-items:center}
+.bk-slot svg{width:100%;height:auto;opacity:.92}
+.bk-slot:nth-child(3n) svg{transform:rotate(9deg)}
+.bk-slot:nth-child(3n+1) svg{transform:rotate(-8deg)}
+.bk-slot:nth-child(3n+2) svg{transform:rotate(3deg)}
+.bk-empty{width:88%;aspect-ratio:1;border:1.5px dashed rgba(107,115,128,.45);border-radius:50%;display:grid;place-items:center;text-align:center;font-size:10.5px;color:#6B7380;line-height:1.2;padding:6px;overflow:hidden}
+.book-acts{display:flex;gap:8px;margin:14px 0 6px}
+.book-acts .btn{flex:1}
 /* Short screens (phone turned sideways): slim nav, compact hero, thinner day tabs */
 @media (orientation:landscape) and (max-height:500px){
   .wrap{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}

@@ -36,6 +36,7 @@
     <button class="hbtn" type="button" id="shareBtn">🔗 แชร์</button>
     <button class="hbtn" type="button" id="sumBtn">🖼️ ภาพสรุป</button>
     <button class="hbtn" type="button" id="printBtn">🖨️ พิมพ์ A4</button>
+    <button class="hbtn" type="button" id="stampBtn">🏮 แสตมป์ <small id="stampCount"></small></button>
   </div>
   <button class="install" type="button" id="installBtn" hidden><span>📲</span><span><b>ติดตั้งเป็นแอปบนมือถือ</b><small>เปิดจากหน้าจอโฮม ใช้ได้แม้ไม่มีเน็ต</small></span><i>›</i></button>
   <p class="hero-credit" id="heroCredit"></p>
@@ -150,6 +151,15 @@
       <button type="button" class="btn" id="sumPrintAll">🖨️ พิมพ์ทั้งหมด A4</button>
     </div>
     <div class="sum-grid" id="sumGrid"></div>
+  </div>
+</div>
+
+<div class="sheet" id="stampSheet" hidden>
+  <div class="sheet-in stamp-in">
+    <div class="sheet-head"><b>สมุดแสตมป์ 🏮</b><button type="button" class="x" data-close aria-label="ปิด">✕</button></div>
+    <div class="book" id="stampBook"></div>
+    <div class="book-acts"><button type="button" class="btn" id="stampSave">💾 เซฟเป็นรูป</button><button type="button" class="btn ghost" id="stampShare">📤 แชร์</button></div>
+    <p class="fine" style="text-align:center">กด 🏮 มาแล้ว! ที่การ์ดแต่ละที่ในแผนรายวัน · ข้อมูลเก็บในเครื่องนี้ ใช้ได้แม้ไม่มีเน็ต</p>
   </div>
 </div>
 

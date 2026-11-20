@@ -105,7 +105,8 @@
           "lon": 121.5047947,
           "hours": "พฤ. 07:00–14:30",
           "photo": "ganmei",
-          "gurl": "https://maps.google.com/?cid=16979244295280319592"
+          "gurl": "https://maps.google.com/?cid=16979244295280319592",
+          "stamp": "甘妹弄堂"
         },
         {
           "time": "10:00",
@@ -115,7 +116,8 @@
           "lat": 25.0373,
           "lon": 121.4998,
           "hours": "~06:00–22:00",
-          "photo": "longshan"
+          "photo": "longshan",
+          "stamp": "龍山寺"
         },
         {
           "time": "10:45",
@@ -125,7 +127,8 @@
           "lat": 25.0364,
           "lon": 121.5022,
           "hours": "06:30–16:00",
-          "photo": "zhouji"
+          "photo": "zhouji",
+          "stamp": "周記"
         },
         {
           "time": "11:30",
@@ -186,7 +189,8 @@
               "lat": 25.0445025,
               "lon": 121.5074087
             }
-          ]
+          ],
+          "stamp": "西門町"
         },
         {
           "time": "15:00",
@@ -207,7 +211,8 @@
           "hours": "ปิด 22:00",
           "photo": "mala",
           "warn": "ควรจองล่วงหน้า",
-          "gurl": "https://maps.google.com/?cid=12118745554118457820"
+          "gurl": "https://maps.google.com/?cid=12118745554118457820",
+          "stamp": "新馬辣"
         }
       ],
       "rain": "ฝนตก: เดินในห้างและร้านในซีเหมินติง · The Red House อยู่ในร่ม · ปลาหมึกย่าง/ชานมซื้อกลับมากินที่โรงแรมได้"
@@ -226,7 +231,8 @@
           "lon": 121.5074503,
           "hours": "เปิด 19:00–14:30 (ข้ามคืน)",
           "gurl": "https://maps.google.com/?cid=803524673363284000",
-          "photo": "yonghe"
+          "photo": "yonghe",
+          "stamp": "永和豆漿"
         },
         {
           "time": "09:00",
@@ -237,7 +243,8 @@
           "lon": 121.5756,
           "hours": "09:00–21:00",
           "photo": "maokong",
-          "gurl": "https://www.google.com/maps?cid=15980724169663629213"
+          "gurl": "https://www.google.com/maps?cid=15980724169663629213",
+          "stamp": "貓空"
         },
         {
           "time": "12:30",
@@ -247,7 +254,8 @@
           "lat": 25.0439,
           "lon": 121.5277,
           "hours": "~10:00–19:00",
-          "photo": "huashan"
+          "photo": "huashan",
+          "stamp": "興波咖啡"
         },
         {
           "time": "14:30",
@@ -256,7 +264,8 @@
           "note": "MRT ไป Taipei City Hall แล้วเดิน · ขนม COMEME 康蜜 ในห้าง A11 อยู่ใกล้ๆ",
           "lat": 25.0316,
           "lon": 121.562,
-          "photo": "sisinan"
+          "photo": "sisinan",
+          "stamp": "四四南村"
         },
         {
           "time": "15:30",
@@ -266,7 +275,9 @@
           "lat": 25.0339,
           "lon": 121.5645,
           "hours": "10:00–21:00",
-          "photo": "taipei101"
+          "photo": "taipei101",
+          "stamp": "台北101",
+          "stamp_gold": true
         },
         {
           "time": "17:45",
@@ -277,7 +288,8 @@
           "lon": 121.5692,
           "hours": "17:00–01:00",
           "warn": "ไม่รับจอง",
-          "photo": "zhucun"
+          "photo": "zhucun",
+          "stamp": "竹村"
         },
         {
           "time": "20:00",
@@ -288,7 +300,8 @@
           "lon": 121.5774,
           "hours": "~17:00–24:00",
           "photo": "raohe",
-          "warn": "MRT เที่ยวสุดท้าย 松山 → 西門 ~00:00"
+          "warn": "MRT เที่ยวสุดท้าย 松山 → 西門 ~00:00",
+          "stamp": "饒河"
         }
       ],
       "rain": "ฝนตกหรือลมแรง กระเช้าหยุด: ไปพิพิธภัณฑ์พระราชวังกู้กง 故宮博物院 แทนช่วงเช้า หรือเดินห้างย่านซินอี้ (Breeze, A11, ใต้ตึก 101) แล้วต่อแพลนเดิมช่วงบ่าย"
@@ -316,7 +329,8 @@
           "lon": 121.7636,
           "hours": "08:00–18:00",
           "photo": "heping",
-          "warn": "หยุดขายตั๋ว 17:00"
+          "warn": "หยุดขายตั๋ว 17:00",
+          "stamp": "和平島"
         },
         {
           "time": "12:00",
@@ -325,7 +339,8 @@
           "note": "กินข้าวกลางวันแถวนี้ · แท็กซี่จาก Heping ~5 นาที",
           "lat": 25.1524,
           "lon": 121.7691,
-          "photo": "zhengbin"
+          "photo": "zhengbin",
+          "stamp": "正濱"
         },
         {
           "time": "14:30",
@@ -335,7 +350,9 @@
           "lat": 25.1091,
           "lon": 121.8462,
           "hours": "ร้าน ~10:00–20:00",
-          "photo": "jiufen"
+          "photo": "jiufen",
+          "stamp": "九份",
+          "stamp_gold": true
         },
         {
           "time": "19:30",
@@ -447,7 +464,8 @@
           "lat": 25.0335,
           "lon": 121.5301,
           "hours": "~09:00–20:30 (เสาร์-อาทิตย์)",
-          "photo": "dintaifung"
+          "photo": "dintaifung",
+          "stamp": "鼎泰豐"
         },
         {
           "time": "11:00",
@@ -457,7 +475,8 @@
           "lat": 25.0308,
           "lon": 121.5295,
           "hours": "~10:00–21:00",
-          "photo": "haokungtao"
+          "photo": "haokungtao",
+          "stamp": "好公道"
         },
         {
           "time": "11:45",
@@ -467,7 +486,8 @@
           "lat": 25.0313,
           "lon": 121.5299,
           "hours": "09:00–20:30",
-          "warn": "รับเงินสดเท่านั้น"
+          "warn": "รับเงินสดเท่านั้น",
+          "stamp": "拉提耶"
         },
         {
           "time": "12:30",
@@ -477,7 +497,8 @@
           "lat": 25.0355,
           "lon": 121.5201,
           "hours": "อาคาร 09:00–18:00",
-          "photo": "cks"
+          "photo": "cks",
+          "stamp": "中正紀念堂"
         },
         {
           "time": "13:45",
@@ -487,7 +508,8 @@
           "lat": 25.0368,
           "lon": 121.519,
           "hours": "~11:00–21:00",
-          "photo": "chunshuitang"
+          "photo": "chunshuitang",
+          "stamp": "春水堂"
         },
         {
           "time": "14:45",
@@ -508,7 +530,8 @@
           "lon": 121.5203182,
           "photo": "zhongshan",
           "hours": "ปิด 22:00",
-          "gurl": "https://maps.google.com/?cid=5679619314147787925"
+          "gurl": "https://maps.google.com/?cid=5679619314147787925",
+          "stamp": "中山"
         },
         {
           "time": "17:45",

@@ -233,7 +233,8 @@ const maps = {};
             ${s.spots?.length?`<ol class="spots">${s.spots.map((x,m)=>`<li><a href="${x.gurl||gmap(x.lat,x.lon,x.local)}" target="_blank" rel="noopener"><b>${String.fromCharCode(65+m)}</b><span><span class="sn">${esc(x.name)}</span><span class="zh" lang="zh-TW">${esc(x.local)}${x.hours?` · ${esc(x.hours)}`:''}</span></span><i>📍</i></a></li>`).join('')}</ol>
             <div class="links"><a class="walk" href="${walkUrl(s)}" target="_blank" rel="noopener">🚶 เส้นทางเดินผ่านทุกจุด</a></div>`:''}
             ${(s.hours||s.warn)?`<div class="tags">${s.hours?`<span class="tag gold">🕒 ${esc(s.hours)}</span>`:''}${s.warn?`<span class="tag">⚠️ ${esc(s.warn)}</span>`:''}</div>`:''}
-            <div class="links"><a href="${s.gurl||gmap(s.lat,s.lon,s.q||s.local)}" target="_blank" rel="noopener">📍 Google</a><a href="${amap(s.lat,s.lon,s.local)}" target="_blank" rel="noopener">🍎 Apple</a></div>
+            <div class="links"><a href="${s.gurl||gmap(s.lat,s.lon,s.q||s.local)}" target="_blank" rel="noopener">📍 Google</a><a href="${amap(s.lat,s.lon,s.local)}" target="_blank" rel="noopener">🍎 Apple</a>${s.stamp?`<button type="button" class="been" data-stamp="${i}-${j}">🏮 มาแล้ว!</button>`:''}</div>
+            ${s.stamp?`<div class="seal" data-seal="${i}-${j}" aria-hidden="true"></div>`:''}
           </div></li>`; }).join(''); })()}</ol>
     </article>`;
   }).join('');
@@ -469,7 +470,7 @@ function bigShow(text, sub){ $('#bigText').textContent=text; $('#bigSub').textCo
 })();
 
 /* ---------- Overlays ---------- */
-function closeAll(){ ['#bigView','#lightbox','#sumSheet','#installSheet'].forEach(s=>$(s).hidden=true); document.documentElement.classList.remove('mfs-open'); }
+function closeAll(){ ['#bigView','#lightbox','#sumSheet','#installSheet','#stampSheet'].forEach(s=>$(s).hidden=true); document.documentElement.classList.remove('mfs-open'); }
 document.addEventListener('click',e=>{ if(e.target.closest('[data-close]') || e.target.id==='lightbox') closeAll(); });
 addEventListener('keydown',e=>{ if(e.key==='Escape') closeAll(); });
 /* Lightbox grows from the thumbnail's own position */
@@ -724,4 +725,104 @@ document.addEventListener('click',e=>{
     document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') reg.update().catch(()=>{}); });
   }).catch(()=>{});
 })();
+/* ---------- Stamp book 🏮 ---------- */
+(function stamps(){
+  const KEY='stamps', all=[];
+  T.days.forEach((d,i)=>d.stops.forEach((s,j)=>{ if(s.stamp) all.push({id:`${i}-${j}`,i,j,s}); }));
+  if(!all.length) return;
+  let got=ls.get(KEY,{}); const save=()=>ls.set(KEY,got);
+  const RED='#B0242E', GOLD='#B5872F';
+  const ymd=iso=>{ const d=new Date(iso); const p=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}.${p(d.getMonth()+1)}.${p(d.getDate())}`; };
+  let uid=0;
+  const svg=(zh,date,col)=>{ const k='sl'+(++uid); const big=zh.length>3;
+    return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><filter id="${k}f" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="1.4" numOctaves="1" seed="${(zh.charCodeAt(0)+uid)%60}"/><feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -0.85 1.3"/><feComposite in="SourceGraphic" operator="in"/></filter><path id="${k}a" d="M22 60a38 38 0 0 1 76 0"/></defs>
+<g filter="url(#${k}f)" fill="none" stroke="${col}"><circle cx="60" cy="60" r="54" stroke-width="5"/><circle cx="60" cy="60" r="46" stroke-width="1.6"/>
+<text font-family="Kanit,sans-serif" font-weight="600" font-size="9.5" letter-spacing="2.4" fill="${col}" stroke="none"><textPath href="#${k}a" startOffset="50%" text-anchor="middle">TAIPEI · 台北</textPath></text>
+<text x="60" y="${big?69:72}" text-anchor="middle" font-family='"PingFang TC","Noto Serif TC","Noto Sans TC",serif' font-weight="900" font-size="${big?18:24}" fill="${col}" stroke="none">${esc(zh)}</text>
+<line x1="30" y1="81" x2="90" y2="81" stroke-width="1.4"/><text x="60" y="94" text-anchor="middle" font-family="Kanit,sans-serif" font-weight="600" font-size="9.5" fill="${col}" stroke="none">${date}</text></g></svg>`; };
+  const colOf=s=>s.stamp_gold?GOLD:RED;
+  const paint=(id,anim)=>{
+    const el=$(`[data-seal="${id}"]`), btn=$(`[data-stamp="${id}"]`), it=all.find(a=>a.id===id); if(!el||!btn) return;
+    if(got[id]){ el.innerHTML=svg(it.s.stamp,ymd(got[id]),colOf(it.s)); el.className='seal '+(anim?'on':'still'); btn.classList.add('done'); btn.textContent='✓ ปั๊มแล้ว'; }
+    else { el.className='seal'; el.innerHTML=''; btn.classList.remove('done'); btn.textContent='🏮 มาแล้ว!'; }
+  };
+  const count=()=>{ const n=all.filter(a=>got[a.id]).length; $('#stampCount').textContent=n?`${n}/${all.length}`:''; return n; };
+  all.forEach(a=>paint(a.id,false)); count();
+  document.addEventListener('click',e=>{
+    const b=e.target.closest('[data-stamp]'); if(!b) return;
+    const id=b.dataset.stamp;
+    if(got[id]){ delete got[id]; save(); paint(id,false); count(); toast('ยกเลิกตราแล้ว'); return; }
+    got[id]=new Date().toISOString(); save(); paint(id,true); const n=count();
+    const ev=b.closest('.evb'); setTimeout(()=>{ ev.classList.remove('thump'); void ev.offsetWidth; ev.classList.add('thump'); try{navigator.vibrate?.(30)}catch(_){} },300);
+    if(n===all.length) setTimeout(()=>toast('🎉 สะสมครบทุกที่แล้ว!'),900);
+  });
+
+  const DAYS=T.days.map((d,i)=>({d,i,list:all.filter(a=>a.i===i)})).filter(x=>x.list.length);
+  const thName=s=>(s.name||'').replace(/^(อาหารเช้า|ซื้อของฝาก|ชานมไข่มุกเจ้าแรก|ช้อปปิ้ง)\s*/,'').split(/[+(·]/)[0].trim();
+  function book(){
+    const n=count();
+    $('#stampBook').innerHTML=`<div class="bk-h"><div><h2>สมุดแสตมป์ไทเป</h2><div class="zh" lang="zh-TW">台北集章之旅</div></div><div class="bk-score"><b>${n}</b>/${all.length}<small>สถานที่ที่ไปแล้ว</small></div></div>
+      <div class="bk-bar"><i style="width:0"></i></div>
+      ${DAYS.map(({d,i,list})=>{ const k=list.filter(a=>got[a.id]).length; return `<div class="bk-day"><h4>วันที่ ${i+1} · ${fmtD(d.date)}<span>${k}/${list.length}</span></h4><div class="bk-grid">${list.map(a=>`<div class="bk-slot">${got[a.id]?svg(a.s.stamp,ymd(got[a.id]),colOf(a.s)):`<div class="bk-empty">${esc(thName(a.s))}</div>`}</div>`).join('')}</div></div>`; }).join('')}`;
+    requestAnimationFrame(()=>setTimeout(()=>{ const bar=$('#stampBook .bk-bar i'); if(bar) bar.style.width=(n/all.length*100)+'%'; },60));
+  }
+  $('#stampBtn').onclick=()=>{ book(); $('#stampSheet').hidden=false; document.documentElement.classList.add('mfs-open'); };
+
+  /* Canvas version for saving */
+  function sealCanvas(zh,date,col,R){
+    const c=document.createElement('canvas'), S=R*2+8; c.width=c.height=S; const x=c.getContext('2d'), cx=S/2, k=R/54;
+    x.strokeStyle=col; x.fillStyle=col;
+    x.lineWidth=5*k; x.beginPath(); x.arc(cx,cx,R,0,7); x.stroke();
+    x.lineWidth=1.6*k; x.beginPath(); x.arc(cx,cx,46*k,0,7); x.stroke();
+    x.font=`600 ${9.5*k}px Kanit`; x.textAlign='center'; x.textBaseline='middle';
+    const top='TAIPEI · 台北'.split(''), span=Math.PI*0.62; top.forEach((ch,m)=>{ const a=-Math.PI/2-span/2+span*m/(top.length-1); x.save(); x.translate(cx+Math.cos(a)*38*k,cx+Math.sin(a)*38*k); x.rotate(a+Math.PI/2); x.fillText(ch,0,0); x.restore(); });
+    const big=zh.length>3; x.font=`900 ${(big?18:24)*k}px "PingFang TC","Noto Serif TC","Noto Sans TC",serif`; x.textBaseline='alphabetic'; x.fillText(zh,cx,cx+(big?9:12)*k,R*1.5);
+    x.lineWidth=1.4*k; x.beginPath(); x.moveTo(cx-30*k,cx+21*k); x.lineTo(cx+30*k,cx+21*k); x.stroke();
+    x.font=`600 ${9.5*k}px Kanit`; x.fillText(date,cx,cx+34*k);
+    x.globalCompositeOperation='destination-out';
+    for(let q=0;q<S*S/14;q++){ x.globalAlpha=Math.random()*.55; x.fillRect(Math.random()*S,Math.random()*S,1.4,1.4); }
+    return c;
+  }
+  async function render(){
+    try{ await document.fonts.ready; }catch(_){}
+    const W=1080, PAD=60, COLS=4, CELL=(W-PAD*2)/COLS, R=CELL*0.4;
+    const rows=DAYS.reduce((a,x)=>a+Math.ceil(x.list.length/COLS),0);
+    const H=PAD+170+DAYS.length*70+rows*CELL+90;
+    const c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d');
+    x.fillStyle='#FBF7EE'; x.fillRect(0,0,W,H);
+    x.strokeStyle='rgba(176,36,46,.3)'; x.lineWidth=3; x.strokeRect(24,24,W-48,H-48);
+    const n=all.filter(a=>got[a.id]).length;
+    x.fillStyle=RED; x.font='600 60px Kanit'; x.textBaseline='alphabetic'; x.fillText('สมุดแสตมป์ไทเป',PAD,PAD+70);
+    x.fillStyle='#6B7380'; x.font='500 28px "PingFang TC","Noto Sans TC",sans-serif'; x.fillText('台 北 集 章 之 旅',PAD,PAD+112);
+    x.textAlign='right'; x.fillStyle=RED; x.font='700 84px Kanit'; const tw=x.measureText(`/${all.length}`).width; x.font='600 40px Kanit'; const sw=x.measureText(`/${all.length}`).width;
+    x.fillText(`/${all.length}`,W-PAD,PAD+70); x.font='700 84px Kanit'; x.fillText(String(n),W-PAD-sw-4,PAD+70);
+    x.fillStyle='#6B7380'; x.font='400 24px "Noto Sans Thai"'; x.fillText('สถานที่ที่ไปแล้ว',W-PAD,PAD+112); x.textAlign='left';
+    x.fillStyle='rgba(176,36,46,.14)'; rrect(x,PAD,PAD+136,W-PAD*2,14,7); x.fill();
+    if(n){ x.fillStyle=RED; rrect(x,PAD,PAD+136,(W-PAD*2)*n/all.length,14,7); x.fill(); }
+    let y=PAD+190;
+    DAYS.forEach(({d,i,list})=>{
+      const k=list.filter(a=>got[a.id]).length;
+      x.fillStyle='#0F3A54'; x.font='600 30px Kanit'; x.fillText(`วันที่ ${i+1} · ${fmtD(d.date)}`,PAD,y+20);
+      x.textAlign='right'; x.fillStyle='#6B7380'; x.font='500 26px Kanit'; x.fillText(`${k}/${list.length}`,W-PAD,y+20); x.textAlign='left';
+      y+=50;
+      list.forEach((a,m)=>{ const cx=PAD+CELL*(m%COLS)+CELL/2, cy=y+CELL*Math.floor(m/COLS)+CELL/2;
+        if(got[a.id]){ const sc=sealCanvas(a.s.stamp,ymd(got[a.id]),colOf(a.s),R); x.save(); x.translate(cx,cy); x.rotate(((m*37)%17-8)*Math.PI/180); x.globalAlpha=.92; x.drawImage(sc,-sc.width/2,-sc.height/2); x.restore(); }
+        else { x.save(); x.setLineDash([8,7]); x.strokeStyle='rgba(107,115,128,.5)'; x.lineWidth=2.5; x.beginPath(); x.arc(cx,cy,R*.9,0,7); x.stroke(); x.restore();
+          x.fillStyle='#8A919C'; x.font='400 21px "Noto Sans Thai"'; x.textAlign='center';
+          const nm=thName(a.s), mx=R*1.55; let ln=[nm];
+          if(x.measureText(nm).width>mx){ const seg=typeof Intl!=='undefined'&&Intl.Segmenter?[...new Intl.Segmenter('th',{granularity:'word'}).segment(nm)].map(z=>z.segment):nm.split(/(\s+)/); let a1=''; ln=['','']; for(const w of seg){ if(!ln[1]&&x.measureText(a1+w).width<=mx){ a1+=w; ln[0]=a1; } else ln[1]+=w; } ln=[ln[0].trim(),fit(x,ln[1].trim(),mx)].filter(Boolean); }
+          ln.forEach((l,q)=>x.fillText(l,cx,cy+7+(q-(ln.length-1)/2)*28)); x.textAlign='left'; }
+      });
+      y+=Math.ceil(list.length/COLS)*CELL+20;
+    });
+    x.fillStyle='#B5872F'; x.font='600 24px Kanit'; x.textAlign='center'; x.fillText(`🏮 ไทเป ทริป · ${fmtD(T.trip.start)} – ${fmtD(T.trip.end)} ${T.trip.start.slice(0,4)}`,W/2,H-PAD+6);
+    return c;
+  }
+  function rrect(x,X,Y,w,h,r){ x.beginPath(); x.moveTo(X+r,Y); x.arcTo(X+w,Y,X+w,Y+h,r); x.arcTo(X+w,Y+h,X,Y+h,r); x.arcTo(X,Y+h,X,Y,r); x.arcTo(X,Y,X+w,Y,r); x.closePath(); }
+  function fit(x,t,max){ if(x.measureText(t).width<=max) return t; while(t.length>1&&x.measureText(t+'…').width>max) t=t.slice(0,-1); return t+'…'; }
+  const blob=async()=>{ const c=await render(); return new Promise(r=>c.toBlob(r,'image/png')); };
+  $('#stampSave').onclick=async()=>{ const b=await blob(); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='taipei-stamps.png'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),4000); };
+  $('#stampShare').onclick=async()=>{ const f=new File([await blob()],'taipei-stamps.png',{type:'image/png'}); if(navigator.canShare?.({files:[f]})){ try{ await navigator.share({files:[f],title:'สมุดแสตมป์ไทเป'}); }catch(_){} } else toast('เครื่องนี้แชร์ไฟล์ไม่ได้ ใช้ปุ่มเซฟแทน'); };
+})();
+
 })();
