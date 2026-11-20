@@ -351,7 +351,8 @@ const maps = {};
 
 /* ---------- Tips ---------- */
 (function tips(){
-  $('#tips').innerHTML=(T.tips||[]).map(x=>`<li class="rv"><span class="ic">${x.icon}</span><div class="tx"><b>${esc(x.title)}</b><small>${esc(x.text)}</small>${x.link?`<div class="links"><a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.linkText||'เปิดลิงก์')} ↗</a></div>`:''}</div></li>`).join('');
+  $('#tipsCount').textContent=`${(T.tips||[]).length} ข้อ · วีซ่า จองร้าน ตั๋ว 101`;
+  $('#tips').innerHTML=(T.tips||[]).map(x=>`<li><span class="ic">${x.icon}</span><div class="tx"><b>${esc(x.title)}</b><small>${esc(x.text)}</small>${x.link?`<div class="links"><a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.linkText||'เปิดลิงก์')} ↗</a></div>`:''}</div></li>`).join('');
 })();
 
 /* ---------- Checklist ---------- */
