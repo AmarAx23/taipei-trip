@@ -52,6 +52,7 @@ const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).
 })();
 
 /* ---------- Fireworks over Taipei 101 (tap the title) ---------- */
+let fwShow=()=>{};
 (function fireworks(){
   const c=$('#fw'), title=$('#tripName'); if(!c.getContext) return;
   const x=c.getContext('2d'); let parts=[], raf=0;
@@ -71,7 +72,7 @@ const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).
     if(!raf) x.clearRect(0,0,c.width,c.height);
   }
   const show=()=>{ if(RM) return; size(); const w=c.offsetWidth, h=c.offsetHeight; [0,260,520].forEach((d,k)=>setTimeout(()=>burst(w*(.25+Math.random()*.5), h*(.15+Math.random()*.3)),d)); };
-  title.addEventListener('click',show);
+  title.addEventListener('click',show); fwShow=show;
   addEventListener('resize',()=>{ if(raf) size(); });
 })();
 
@@ -102,10 +103,28 @@ const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).
     setTimeout(()=>{ b.textContent = v; ft.textContent = v; el.classList.remove('go'); }, 650);
   };
   let first = true;
+  /* ?now=2026-12-10T08:00 lets you preview a moment of the trip */
+  let OFF=0; try{ const q=new URLSearchParams(location.search).get('now'); if(q){ const d=Date.parse(/[+Z]/.test(q.slice(10))?q:q+'+08:00'); if(!isNaN(d)) OFF=d-Date.now(); } }catch(_){}
+  const tArr = Date.parse(`${out.date}T${out.arr}:00+08:00`);
+  const welcomeEnd = Date.parse(`${T.trip.start}T23:59:59+08:00`);
+  let welcomed=false;
+  function welcome(){
+    if(welcomed) return; welcomed=true;
+    clock.hidden=true; label.textContent='';
+    const w=document.createElement('div'); w.className='welcome'; w.id='welcome';
+    w.innerHTML=`<div class="wl-zh" lang="zh-TW">${'歡迎來到台北'.split('').map((c,k)=>`<span style="--k:${k}">${c}</span>`).join('')}</div><div class="wl-th">ยินดีต้อนรับสู่ไทเป! 🎉</div><div class="wl-sub">วันแรกของทริป · แตะเพื่อจุดพลุอีกครั้ง</div>`;
+    clock.after(w);
+    w.addEventListener('click',()=>fwShow());
+    const go=()=>{ fwShow(); setTimeout(fwShow,1400); setTimeout(fwShow,2800); };
+    if(document.readyState==='complete') setTimeout(go,500); else addEventListener('load',()=>setTimeout(go,500));
+  }
   function tick(){
-    const now = Date.now(); let target;
+    const now = Date.now()+OFF; let target;
     if (now < tOut){ target=tOut; label.textContent = ''; }
-    else if (now < tBack){ target=tBack; label.textContent = `🎉 อยู่ไทเปแล้ว! เหลือเวลาก่อนบินกลับ ${back.code}`; }
+    else if (now < tArr){ target=tArr; label.textContent = `✈️ กำลังบินไปไทเป · ${out.code} ถึง ${out.arr} น.`; }
+    else if (now < welcomeEnd){ welcome(); return; }
+    else if (now < tBack){
+      if(welcomed){ welcomed=false; $('#welcome')?.remove(); clock.hidden=false; } target=tBack; label.textContent = `🎉 อยู่ไทเปแล้ว! เหลือเวลาก่อนบินกลับ ${back.code}`; }
     else { label.textContent = '✨ จบทริปแล้ว ขอบคุณที่เที่ยวด้วยกัน'; clock.hidden = true; return; }
     const s = Math.max(0, Math.floor((target-now)/1000));
     let v = [Math.floor(s/86400), Math.floor(s%86400/3600), Math.floor(s%3600/60), s%60];
