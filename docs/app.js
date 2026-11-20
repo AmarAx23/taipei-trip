@@ -504,11 +504,78 @@ document.addEventListener('click',e=>{
   $('#sumPrintAll').onclick=()=>printImages(lastFigs);
   $$('#sumLang button').forEach(b=>b.onclick=()=>{ useLocal=b.dataset.l==='zh'; $$('#sumLang button').forEach(x=>x.classList.toggle('on',x===b)); build(); });
   $('#sumBtn').onclick=()=>{ $('#sumSheet').hidden=false; document.documentElement.classList.add('mfs-open'); build(); };
-  function wrap(ctx,text,maxW){ const out=[]; let line=''; for(const ch of [...text]){ if(ctx.measureText(line+ch).width>maxW && line){ out.push(line); line=ch; } else line+=ch; } if(line) out.push(line); return out; }
+  // Wrap on word boundaries (Thai has no spaces, so use the word segmenter when the browser has it)
+  const SEG = window.Intl?.Segmenter ? new Intl.Segmenter('th',{granularity:'word'}) : null;
+  function wrap(ctx,text,maxW){
+    const parts = SEG ? [...SEG.segment(text)].map(p=>p.segment) : [...text];
+    const out=[]; let line='';
+    for(const w of parts){
+      if(ctx.measureText(line+w).width>maxW && line){ out.push(line.trimEnd()); line=w.trimStart(); }
+      else line+=w;
+      while(ctx.measureText(line).width>maxW && line.length>1){ let k=line.length; while(k>1 && ctx.measureText(line.slice(0,k)).width>maxW) k--; out.push(line.slice(0,k)); line=line.slice(k); }
+    }
+    if(line) out.push(line); return out;
+  }
   const imgCache={};
   const loadImg=src=>imgCache[src]||(imgCache[src]=new Promise(r=>{ const i=new Image(); i.onload=()=>r(i); i.onerror=()=>r(null); i.src=src; }));
+  /* Day image: a stack of photo cards with a time pill on each, like the Shanghai trip */
+  function rr(x,X,Y,w,h,r){ x.beginPath(); if(x.roundRect) x.roundRect(X,Y,w,h,r); else x.rect(X,Y,w,h); }
+  function fit(x,t,max){ if(x.measureText(t).width<=max) return t; let s=[...t]; while(s.length && x.measureText(s.join('')+'…').width>max) s.pop(); return s.join('')+'…'; }
+  async function drawDay(i){
+    const d=T.days[i], dt=parseD(d.date), stops=d.stops;
+    const zh='"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';
+    const W=1080, PAD=56, HEAD=380, BLOCK=262, H=HEAD+stops.length*BLOCK+150;
+    const c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d');
+    const RED='#B0242E', NAVY='#1D5C82', GOLD='#B5872F', INK='#1B2730', MUTED='#6B7680';
+    x.fillStyle='#F4F1EA'; x.fillRect(0,0,W,H);
+    // red/cream candy stripe along the top edge
+    x.save(); x.beginPath(); x.rect(0,0,W,22); x.clip(); x.fillStyle='#fff'; x.fillRect(0,0,W,22); x.fillStyle=RED;
+    for(let k=-30;k<W+30;k+=34){ x.beginPath(); x.moveTo(k,22); x.lineTo(k+14,0); x.lineTo(k+28,0); x.lineTo(k+14,22); x.fill(); } x.restore();
+    // header band with the day's first photo
+    const key=stops.find(s=>s.photo&&!s.hotel&&!s.skip_route&&P[s.photo])?.photo;
+    const hi=key?await loadImg(P[key].file):null;
+    x.save(); rr(x,PAD-16,50,W-2*PAD+32,290,34); x.clip(); x.fillStyle='#0F3A54'; x.fillRect(0,50,W,290);
+    if(hi){ const k=Math.max((W-2*PAD+32)/hi.width,290/hi.height); x.drawImage(hi,(W-hi.width*k)/2,50+(290-hi.height*k)/2,hi.width*k,hi.height*k); }
+    const g=x.createLinearGradient(0,50,0,340); g.addColorStop(0,'rgba(10,38,58,.55)'); g.addColorStop(1,'rgba(110,24,32,.9)'); x.fillStyle=g; x.fillRect(0,50,W,290); x.restore();
+    x.fillStyle='#EBCB82'; x.font='600 26px "Noto Sans Thai"'; x.fillText(`${T.trip.name_local} · ${T.trip.name}`,PAD+18,104);
+    x.fillStyle='#fff'; x.font='700 92px Kanit'; x.fillText(`วันที่ ${i+1}`,PAD+18,210);
+    x.font='600 36px Kanit'; x.fillText(`${WDL[dt.getUTCDay()]} ${dt.getUTCDate()} ${MO[dt.getUTCMonth()]} ${dt.getUTCFullYear()}`,PAD+18,266);
+    x.font=useLocal?`600 30px ${zh}`:'500 30px "Noto Sans Thai"'; x.fillStyle='rgba(255,255,255,.9)';
+    x.fillText(fit(x,useLocal?stops.filter(s=>!s.hotel&&!s.skip_route).slice(0,3).map(s=>s.local).join(' · '):d.title,W-2*PAD-40),PAD+18,312);
+    // cards
+    let y=HEAD; const imgs=await Promise.all(stops.map(s=>(!s.skip_photo&&s.photo&&P[s.photo])?loadImg(P[s.photo].file):null));
+    stops.forEach((s,j)=>{
+      const col=s.hotel?NAVY:(j%2?NAVY:RED), cy=y+28, CH=190, CW=W-2*PAD;
+      if(j>0){ x.strokeStyle=GOLD; x.lineWidth=4; x.setLineDash([4,10]); x.beginPath(); x.moveTo(W/2,y-40); x.lineTo(W/2,y); x.stroke(); x.setLineDash([]); }
+      x.save(); x.shadowColor='rgba(15,58,84,.12)'; x.shadowBlur=24; x.shadowOffsetY=8; rr(x,PAD,cy,CW,CH,30); x.fillStyle='#fff'; x.fill(); x.restore();
+      rr(x,PAD,cy,CW,CH,30); x.lineWidth=5; x.strokeStyle=col; x.stroke();
+      // thumbnail or icon
+      const TX=PAD+26, TY=cy+31, TW=200, TH=128, im=imgs[j];
+      x.save(); rr(x,TX,TY,TW,TH,20); x.clip();
+      if(im){ const k=Math.max(TW/im.width,TH/im.height); x.drawImage(im,TX+(TW-im.width*k)/2,TY+(TH-im.height*k)/2,im.width*k,im.height*k); }
+      else { x.fillStyle=s.hotel?'#E4EEF5':'#FBEDEE'; x.fillRect(TX,TY,TW,TH); x.font='64px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif'; x.textAlign='center'; x.textBaseline='middle'; x.fillText(s.hotel?'🏨':(s.skip_route?'✈️':'📍'),TX+TW/2,TY+TH/2+4); x.textAlign='left'; x.textBaseline='alphabetic'; }
+      x.restore();
+      // text
+      const TXT=TX+TW+30, MAX=W-PAD-26-TXT;
+      x.fillStyle='#0F3A54'; x.font=useLocal?`700 38px ${zh}`:'600 38px Kanit'; x.fillText(fit(x,useLocal?s.local:(s.name||''),MAX),TXT,cy+82);
+      x.fillStyle=MUTED; x.font=useLocal?'400 25px "Noto Sans Thai"':'400 25px "Noto Sans Thai"';
+      const sub=useLocal?(s.name||''):[s.local,s.note].filter(Boolean).join(' · ');
+      { const ls=wrap(x,sub,MAX); ls.slice(0,2).forEach((l,m)=>x.fillText(m===1&&ls.length>2?fit(x,l+' …',MAX):l,TXT,cy+124+m*34)); }
+      // time pill on the top border
+      x.font='600 30px Kanit'; const pw=x.measureText(s.time).width+56;
+      rr(x,(W-pw)/2,cy-28,pw,52,26); x.fillStyle=col; x.fill(); x.lineWidth=5; x.strokeStyle='#F4F1EA'; x.stroke();
+      x.fillStyle='#fff'; x.textAlign='center'; x.fillText(s.time,W/2,cy+9); x.textAlign='left';
+      y+=BLOCK;
+    });
+    // footer
+    x.fillStyle=GOLD; x.font='600 24px Kanit'; x.textAlign='center';
+    x.fillText(`🏮 ${T.trip.name} · ${T.trip.name_local} · ${fmtD(T.trip.start)}–${fmtD(T.trip.end)} ${dt.getUTCFullYear()}`,W/2,H-82);
+    x.fillStyle=MUTED; x.font='400 20px "Noto Sans Thai"'; x.fillText(`ภาพสถานที่จาก Wikimedia Commons · ${location.host}${location.pathname}`,W/2,H-46); x.textAlign='left';
+    return c;
+  }
   async function draw(kind, i){
     try{ await Promise.all(['600 64px Kanit','700 64px Kanit','400 30px "Noto Sans Thai"','600 30px "Noto Sans Thai"'].map(f=>document.fonts.load(f))); }catch(e){}
+    if(kind==='day') return drawDay(i);
     const W=1080,H=1350,c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d');
     const zh='"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';
     const nm=s=>useLocal?s.local:s.name;
