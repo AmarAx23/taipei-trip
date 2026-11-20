@@ -133,7 +133,7 @@ const WMO = c => c===0?['☀️','แดด']:c<=2?['🌤️','เมฆบ้�
       return `<div class="trip" style="--i:${k}"><div class="d">${fmtD(day.date)}</div><div class="i" title="${txt}">${ic}</div><div class="t">${Math.round(d.temperature_2m_max[i])}° <small>${Math.round(d.temperature_2m_min[i])}°</small></div><div class="r">☔ ${d.precipitation_probability_max[i] ?? '–'}%</div></div>`;
     }).join('');
     const got = d && T.days.some(day=>d.time.includes(day.date));
-    sub.innerHTML = got ? `พยากรณ์จริง${stamp?`<small>อัปเดต ${esc(stamp)}</small>`:''}` : `ค่าเฉลี่ยเดือนธันวาคม<small>${toStart>0?`พยากรณ์จริงจะขึ้นเองเมื่อเหลือ ≤16 วัน (อีก ${toStart} วัน)`:''}</small>`;
+    sub.innerHTML = got ? `พยากรณ์จริง${stamp?`<small>อัปเดต ${esc(stamp)}</small>`:''}` : `ค่าเฉลี่ยเดือนธันวาคม${toStart>15?`<small>พยากรณ์จริงมาในอีก ~${toStart-15} วัน</small>`:''}`;
   };
   const cached = ls.get('wx', null);
   render(cached ? cached.data : {daily:null}, cached ? cached.stamp + ' · ข้อมูลเก่า' : '');
