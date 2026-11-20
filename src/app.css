@@ -172,7 +172,7 @@ html.ios-app .dtabs{top:env(safe-area-inset-top,0px)}
 .days-card{padding:0;overflow:hidden}
 .days{display:flex;align-items:flex-start;transition:height .3s ease;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
 .days::-webkit-scrollbar{display:none}
-.day{flex:0 0 100%;scroll-snap-align:start;scroll-snap-stop:always;min-width:0;padding:18px 16px 16px}
+.day{flex:0 0 100%;scroll-snap-align:start;scroll-snap-stop:always;min-width:0;padding:18px 14px 16px}
 .dayhead{display:flex;gap:14px;align-items:center}
 .dayhead .num{width:48px;height:48px;flex:none;border-radius:16px;background:var(--tab-on);color:#fff;display:grid;place-items:center;font-family:var(--head);font-size:22px;font-weight:600}
 .dh-txt{flex:1;min-width:0}
@@ -242,10 +242,10 @@ html.mfs-open .bnav{display:none}
 .leaflet-container{font-family:var(--body)}
 
 .tl{list-style:none;margin:14px 0 0;padding:0;position:relative}
-.tl::before{content:"";position:absolute;left:57px;top:10px;bottom:10px;width:2px;background:var(--line)}
-.tl::after{content:"";position:absolute;left:57px;top:10px;width:2px;height:calc((100% - 20px) * var(--tlp,0));background:linear-gradient(var(--red),var(--gold));border-radius:2px;transition:height .15s linear}
-.ev{display:grid;grid-template-columns:44px 20px minmax(0,1fr);gap:4px;padding:9px 0}
-.ev time{font-size:12.5px;font-weight:600;color:var(--muted);text-align:right;padding-top:2px;font-variant-numeric:tabular-nums}
+.tl::before{content:"";position:absolute;left:48px;top:10px;bottom:10px;width:2px;background:var(--line)}
+.tl::after{content:"";position:absolute;left:48px;top:10px;width:2px;height:calc((100% - 20px) * var(--tlp,0));background:linear-gradient(var(--red),var(--gold));border-radius:2px;transition:height .15s linear}
+.ev{display:grid;grid-template-columns:38px 14px minmax(0,1fr);gap:3px 4px;padding:9px 0}
+.ev time{padding-right:3px;font-size:12px;font-weight:600;color:var(--muted);text-align:right;padding-top:2px;font-variant-numeric:tabular-nums}
 .ev .dot{width:13px;height:13px;border-radius:50%;background:var(--card);border:3px solid var(--dot,var(--red));margin:5px auto 0;position:relative;z-index:1;transition:transform .35s cubic-bezier(.3,1.6,.5,1),box-shadow .35s}
 .ev.hotel .dot{--dot:var(--navy-2);border-radius:4px}
 .ev.lit .dot{transform:scale(1.25);box-shadow:0 0 0 4px var(--red-soft)}
