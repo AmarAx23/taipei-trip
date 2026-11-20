@@ -25,6 +25,9 @@
 <header class="hero" id="top">
   <canvas class="fw" id="fw" aria-hidden="true"></canvas>
   <div class="skylan" id="skylan" aria-hidden="true"></div>
+  <div class="mylan" id="mylan"></div>
+  <button class="lan-btn" type="button" id="lanBtn" aria-label="ปล่อยโคมอธิษฐาน">🏮<span>ปล่อยโคม</span></button>
+  <div class="lan-tip" id="lanTip" hidden></div>
   <button class="theme-toggle-btn" id="themeBtn" type="button" aria-label="สลับโหมดมืด"><span class="tt-stars">✦ ✦</span><span class="tt-cloud">☁️</span><span class="tt-knob"></span></button>
   <div class="eyebrow" id="heroEyebrow"></div>
   <h1 id="tripName"></h1>
@@ -161,6 +164,18 @@
     <div class="book-acts"><button type="button" class="btn" id="stampSave">💾 เซฟเป็นรูป</button><button type="button" class="btn ghost" id="stampShare">📤 แชร์</button></div>
     <p class="fine" style="text-align:center">กด 🏮 มาแล้ว! ที่การ์ดแต่ละที่ในแผนรายวัน · ข้อมูลเก็บในเครื่องนี้ ใช้ได้แม้ไม่มีเน็ต</p>
   </div>
+</div>
+
+<div class="lan-sheet" id="lanSheet" hidden>
+  <button type="button" class="x" data-close aria-label="ปิด">✕</button>
+  <div class="lan-hint">เลือกสีโคม แล้วเขียนคำอธิษฐาน</div>
+  <div class="lan-cols" id="lanCols"></div>
+  <div class="lan-big" id="lanBig"><div class="lan-svg" id="lanSvg"></div><textarea id="lanWish" maxlength="60" placeholder="ขอให้ทริปนี้สนุก ปลอดภัย ☀️"></textarea></div>
+  <input class="lan-name" id="lanName" maxlength="16" placeholder="ชื่อคนเขียน (ไม่ใส่ก็ได้)">
+  <div class="lan-ideas" id="lanIdeas"></div>
+  <button type="button" class="lan-up" id="lanSend">🏮 ปล่อยโคม</button>
+  <div class="lan-swipe">หรือปัดโคมขึ้นฟ้า ↑</div>
+  <div class="lan-mine" id="lanMine"></div>
 </div>
 
 <div class="sheet" id="installSheet" hidden>

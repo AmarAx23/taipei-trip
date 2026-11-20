@@ -254,6 +254,7 @@ const maps = {};
             ${(s.hours||s.warn)?`<div class="tags">${s.hours?`<span class="tag gold">🕒 ${esc(s.hours)}</span>`:''}${s.warn?`<span class="tag">⚠️ ${esc(s.warn)}</span>`:''}</div>`:''}
             <div class="links"><a href="${s.gurl||gmap(s.lat,s.lon,s.q||s.local)}" target="_blank" rel="noopener">📍 Google</a><a href="${amap(s.lat,s.lon,s.local)}" target="_blank" rel="noopener">🍎 Apple</a>${s.stamp?`<button type="button" class="been" data-stamp="${i}-${j}">🏮 มาแล้ว!</button>`:''}</div>
             ${s.stamp?`<div class="seal" data-seal="${i}-${j}" aria-hidden="true"></div>`:''}
+            ${s.lantern?`<button type="button" class="lan-go" data-lan>🏮 ปล่อยโคมอธิษฐานที่จิ่วเฟิ่น</button>`:''}
           </div></li>`; }).join(''); })()}</ol>
     </article>`;
   }).join('');
@@ -489,7 +490,7 @@ function bigShow(text, sub){ $('#bigText').textContent=text; $('#bigSub').textCo
 })();
 
 /* ---------- Overlays ---------- */
-function closeAll(){ ['#bigView','#lightbox','#sumSheet','#installSheet','#stampSheet'].forEach(s=>$(s).hidden=true); document.documentElement.classList.remove('mfs-open'); }
+function closeAll(){ ['#bigView','#lightbox','#sumSheet','#installSheet','#stampSheet','#lanSheet'].forEach(s=>$(s).hidden=true); document.documentElement.classList.remove('mfs-open'); }
 document.addEventListener('click',e=>{ if(e.target.closest('[data-close]') || e.target.id==='lightbox') closeAll(); });
 addEventListener('keydown',e=>{ if(e.key==='Escape') closeAll(); });
 /* Lightbox grows from the thumbnail's own position */
@@ -842,6 +843,73 @@ document.addEventListener('click',e=>{
   const blob=async()=>{ const c=await render(); return new Promise(r=>c.toBlob(r,'image/png')); };
   $('#stampSave').onclick=async()=>{ const b=await blob(); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='taipei-stamps.png'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),4000); };
   $('#stampShare').onclick=async()=>{ const f=new File([await blob()],'taipei-stamps.png',{type:'image/png'}); if(navigator.canShare?.({files:[f]})){ try{ await navigator.share({files:[f],title:'สมุดแสตมป์ไทเป'}); }catch(_){} } else toast('เครื่องนี้แชร์ไฟล์ไม่ได้ ใช้ปุ่มเซฟแทน'); };
+})();
+
+
+/* ---------- Sky-lantern wishes 🏮 ---------- */
+(function lanterns(){
+  const KEY='lanterns', hero=$('#top'), box=$('#mylan'), tip=$('#lanTip'), sheet=$('#lanSheet');
+  const COLS=[
+    {k:'red',   a:'#ff7a5c',b:'#c8321f',zh:'平安',th:'สุขภาพ ปลอดภัย'},
+    {k:'yellow',a:'#ffe27a',b:'#e0a21c',zh:'財運',th:'โชคลาภ การเงิน'},
+    {k:'pink',  a:'#ffb3cf',b:'#e2578c',zh:'幸福',th:'ความสุข'},
+    {k:'orange',a:'#ffc07a',b:'#ec7a1f',zh:'愛情',th:'ความรัก'},
+    {k:'blue',  a:'#8fd0ff',b:'#2f73c8',zh:'事業',th:'การงาน'},
+    {k:'purple',a:'#d1a8ff',b:'#7b46c9',zh:'學業',th:'การเรียน'}];
+  const IDEAS=['ขอให้เดินทางปลอดภัย','ไม่มีฝนตกเลย ☀️','กินอร่อยทุกมื้อ 😋','ได้กลับมาไต้หวันอีก','สุขภาพแข็งแรงทุกคน'];
+  let list=ls.get(KEY,[]); const save=()=>ls.set(KEY,list);
+  let cur=COLS[0]; let uid=0;
+  const small=c=>{ const id='ml'+(++uid); return `<svg viewBox="0 0 30 40"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c.a}"/><stop offset="1" stop-color="${c.b}"/></linearGradient></defs><path d="M5 2h20l4 30H1z" fill="url(#${id})"/><rect x="9" y="9" width="12" height="15" rx="1.5" fill="#F6E3B4" opacity=".9"/><ellipse class="glow" cx="15" cy="34" rx="3" ry="2" fill="#ffd25a"/></svg>`; };
+  const big=c=>`<svg viewBox="0 0 300 410" aria-hidden="true"><defs><linearGradient id="lp" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${c.b}"/><stop offset=".5" stop-color="${c.a}"/><stop offset="1" stop-color="${c.b}"/></linearGradient><radialGradient id="lgw" cx=".5" cy=".85" r=".7"><stop offset="0" stop-color="#FFE7A0" stop-opacity=".9"/><stop offset=".55" stop-color="#FFB45A" stop-opacity=".3"/><stop offset="1" stop-color="#FFB45A" stop-opacity="0"/></radialGradient></defs>
+    <path d="M38 14 Q150 0 262 14 L250 372 Q150 386 50 372 Z" fill="url(#lp)"/><path d="M38 14 Q150 0 262 14 L250 372 Q150 386 50 372 Z" fill="url(#lgw)"/>
+    <g stroke="rgba(60,20,10,.28)" stroke-width="2" fill="none"><path d="M112 8 L118 378"/><path d="M188 8 L182 378"/></g>
+    <rect x="62" y="58" width="176" height="236" rx="10" fill="#F6E3B4" opacity=".93"/><rect x="68" y="64" width="164" height="224" rx="7" fill="none" stroke="#B5872F" stroke-width="2" stroke-dasharray="6 5"/>
+    <text x="150" y="44" text-anchor="middle" font-family='"PingFang TC","Noto Serif TC",serif' font-weight="900" font-size="26" fill="#FFF8E1" stroke="rgba(70,15,10,.55)" stroke-width="1.6" paint-order="stroke">${c.zh}</text>
+    <path d="M50 372 Q150 386 250 372 L246 384 Q150 398 54 384 Z" fill="rgba(60,15,10,.75)"/><g stroke="#3a1406" stroke-width="2"><line x1="96" y1="384" x2="140" y2="404"/><line x1="204" y1="384" x2="160" y2="404"/></g>
+    <ellipse class="glow" cx="150" cy="402" rx="10" ry="6" fill="#FFD25A"/></svg>`;
+  const colOf=k=>COLS.find(c=>c.k===k)||COLS[0];
+
+  /* our lanterns drift slowly across the hero sky and loop */
+  const live=[];
+  function addMine(w,fromLaunch){
+    const el=document.createElement('button'); el.type='button'; el.className='ml'; el.setAttribute('aria-label','อ่านคำอธิษฐาน');
+    el.innerHTML=small(colOf(w.c));
+    const o={el,w,x:10+Math.random()*78,y:fromLaunch?100:25+Math.random()*55,vy:.03+Math.random()*.02,ph:Math.random()*6};
+    el.onclick=()=>{ tip.innerHTML=`“${esc(w.t)}”${w.n?`<small>— ${esc(w.n)}</small>`:''}`; tip.hidden=false; clearTimeout(tip._h); tip._h=setTimeout(()=>tip.hidden=true,3200); };
+    box.appendChild(el); live.push(o);
+  }
+  let last=performance.now(), raf=0;
+  function loop(n){ const dt=Math.min(50,n-last); last=n;
+    if(!RM) for(const o of live){ o.y-=o.vy*dt/16; o.ph+=dt/900; if(o.y<-10){ o.y=104; o.x=10+Math.random()*78; } o.el.style.left=(o.x+Math.sin(o.ph)*3)+'%'; o.el.style.top=o.y+'%'; }
+    raf=requestAnimationFrame(loop); }
+  function place(){ live.forEach(o=>{ o.el.style.left=o.x+'%'; o.el.style.top=o.y+'%'; }); }
+  list.forEach(w=>addMine(w,false)); place();
+  if(!RM) raf=requestAnimationFrame(loop);
+  document.addEventListener('visibilitychange',()=>{ if(document.hidden){ cancelAnimationFrame(raf); raf=0; } else if(!raf&&!RM){ last=performance.now(); raf=requestAnimationFrame(loop); } });
+
+  const B=$('#lanBig'), ta=$('#lanWish'), nm=$('#lanName');
+  function pick(c){ cur=c; $('#lanSvg').innerHTML=big(c); $$('#lanCols button').forEach(b=>b.classList.toggle('on',b.dataset.k===c.k)); }
+  $('#lanCols').innerHTML=COLS.map(c=>`<button type="button" data-k="${c.k}" style="--a:${c.a};--b:${c.b}"><i></i><b lang="zh-TW">${c.zh}</b><small>${c.th}</small></button>`).join('');
+  $('#lanCols').onclick=e=>{ const b=e.target.closest('button'); if(b) pick(colOf(b.dataset.k)); };
+  $('#lanIdeas').innerHTML=IDEAS.map(t=>`<button type="button">${esc(t)}</button>`).join('');
+  $('#lanIdeas').onclick=e=>{ if(e.target.tagName==='BUTTON') ta.value=e.target.textContent; };
+  function mine(){ $('#lanMine').innerHTML=list.length?`<b>โคมที่ปล่อยแล้ว ${list.length} ใบ</b> · แตะโคมสีบนฟ้าในหน้าแรกเพื่ออ่าน`:''; }
+  function open(){ pick(cur); ta.value=''; B.className='lan-big'; B.style.transform=''; mine(); sheet.hidden=false; document.documentElement.classList.add('mfs-open'); }
+  $('#lanBtn').onclick=open;
+  document.addEventListener('click',e=>{ if(e.target.closest('[data-lan]')) open(); });
+  function launch(){
+    if(B.classList.contains('fly')) return;
+    const t=ta.value.trim()||ta.placeholder; ta.blur();
+    B.classList.add('fly'); try{navigator.vibrate?.(20)}catch(_){}
+    setTimeout(()=>{ const w={t,c:cur.k,n:nm.value.trim(),at:new Date().toISOString()}; list.push(w); save(); closeAll(); addMine(w,true); place();
+      if(RM) place(); scrollTo({top:0,behavior:'smooth'}); toast('🏮 ปล่อยโคมแล้ว ดูโคมลอยอยู่บนฟ้าด้านบน'); },1800);
+  }
+  $('#lanSend').onclick=launch;
+  let sy=null;
+  B.addEventListener('pointerdown',e=>{ if(e.target===ta) return; sy=e.clientY; B.setPointerCapture?.(e.pointerId); });
+  B.addEventListener('pointermove',e=>{ if(sy==null) return; const d=Math.min(0,e.clientY-sy); B.style.transform=`translateY(${d}px)`; B.style.setProperty('--dy',d+'px'); });
+  const end=e=>{ if(sy==null) return; const d=e.clientY-sy; sy=null; if(d<-70) launch(); else B.style.transform=''; };
+  B.addEventListener('pointerup',end); B.addEventListener('pointercancel',()=>{ sy=null; B.style.transform=''; });
 })();
 
 })();

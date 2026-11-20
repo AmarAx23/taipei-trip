@@ -352,7 +352,8 @@
           "hours": "ร้าน ~10:00–20:00",
           "photo": "jiufen",
           "stamp": "九份",
-          "stamp_gold": true
+          "stamp_gold": true,
+          "lantern": true
         },
         {
           "time": "19:30",
