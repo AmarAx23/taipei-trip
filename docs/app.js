@@ -559,8 +559,8 @@ document.addEventListener('click',e=>{
       if(ri>0){ x.strokeStyle=GOLD; x.lineWidth=4; x.setLineDash([4,10]); x.beginPath(); x.moveTo(mid,cy-BLOCK+CH); x.lineTo(mid,cy-28); x.stroke(); x.setLineDash([]); }
       x.save(); x.shadowColor='rgba(15,58,84,.12)'; x.shadowBlur=24; x.shadowOffsetY=8; rr(x,X0,cy,CW,CH,30); x.fillStyle='#fff'; x.fill(); x.restore();
       rr(x,X0,cy,CW,CH,30); x.lineWidth=5; x.strokeStyle=col; x.stroke();
-      const V=cols>1;   // two-column A4: photo on top, text below
-      const TH=V?Math.round(CH*0.42):Math.round(128*sc), TW=V?Math.round(CW-44):Math.round(200*Math.min(sc,1.2));
+      const V=cols>1&&CH>=215;   // two-column A4: photo on top, text below
+      const TH=V?Math.max(40,CH-30-80-26):Math.min(CH-28,Math.round(128*sc)), TW=V?Math.round(CW-44):Math.round((cols>1?150:200)*Math.min(sc,1.2));
       const TX=X0+22, TY=V?cy+30:cy+(CH-TH)/2+6, im=imgs[j];
       x.save(); rr(x,TX,TY,TW,TH,18); x.clip();
       if(im){ const k=Math.max(TW/im.width,TH/im.height); x.drawImage(im,TX+(TW-im.width*k)/2,TY+(TH-im.height*k)/2,im.width*k,im.height*k); }
@@ -571,8 +571,8 @@ document.addEventListener('click',e=>{
       x.fillStyle='#0F3A54'; x.font=useLocal?`700 ${Math.round(36*fs)}px ${zh}`:`600 ${Math.round(36*fs)}px Kanit`; x.fillText(fit(x,useLocal?s.local:(s.name||''),MAX),TXT,ty);
       x.fillStyle=MUTED; x.font=`400 ${Math.round(24*fs)}px "Noto Sans Thai"`;
       const sub=useLocal?(s.name||''):[s.local,s.note].filter(Boolean).join(' · ');
-      const lh=Math.round(32*fs), maxL=Math.max(1,Math.floor((cy+CH-14-(ty+Math.round(40*fs)))/lh)+1);
-      const ls=wrap(x,sub,MAX); ls.slice(0,Math.min(maxL,3)).forEach((l,m,arr)=>x.fillText(m===arr.length-1&&ls.length>arr.length?fit(x,l+' …',MAX):l,TXT,ty+Math.round(40*fs)+m*lh));
+      const lh=Math.round(32*fs), maxL=Math.max(1,Math.floor((cy+CH-14-(ty+Math.round(40*fs)))/lh));
+      const ls=wrap(x,sub,MAX); ls.slice(0,V?1:Math.min(maxL,3)).forEach((l,m,arr)=>x.fillText(m===arr.length-1&&ls.length>arr.length?fit(x,l+' …',MAX):l,TXT,ty+Math.round(40*fs)+m*lh));
       x.font=`600 ${Math.round(30*Math.min(fs,1.05))}px Kanit`; const pw=x.measureText(s.time).width+56;
       rr(x,mid-pw/2,cy-28,pw,52,26); x.fillStyle=col; x.fill(); x.lineWidth=5; x.strokeStyle='#F4F1EA'; x.stroke();
       x.fillStyle='#fff'; x.textAlign='center'; x.fillText(s.time,mid,cy+9); x.textAlign='left';
