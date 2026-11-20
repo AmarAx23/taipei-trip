@@ -21,7 +21,7 @@ function localNow(){
 let toastT;
 function toast(msg, ms=2600){ const t=$('#toast'); t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true, ms); }
 const photo = key => key && P[key] ? P[key] : null;
-const credit = p => p ? `${/ตัวอย่าง/.test(p.label||'')?'ภาพตัวอย่าง · ':''}ภาพ: <a href="${esc(p.page)}" target="_blank" rel="noopener">${esc(p.author||'Wikimedia Commons')}</a> · ${esc(p.license)}` : '';
+const credit = p => p ? p.own ? 'ภาพจากเจ้าของทริป' : `${/ตัวอย่าง/.test(p.label||'')?'ภาพตัวอย่าง · ':''}ภาพ: <a href="${esc(p.page)}" target="_blank" rel="noopener">${esc(p.author||'Wikimedia Commons')}</a> · ${esc(p.license)}` : '';
 const gmap = (lat, lon, q) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q || (lat+','+lon))}`;
 const amap = (lat, lon, q) => `https://maps.apple.com/?q=${encodeURIComponent(q||'')}&ll=${lat},${lon}`;
 const walkUrl = s => { const pts=s.spots.map(x=>`${x.lat},${x.lon}`); const w=pts.slice(0,-1).join('|'); return `https://www.google.com/maps/dir/?api=1&origin=${T.hotel.lat},${T.hotel.lon}&destination=${pts[pts.length-1]}${w?`&waypoints=${encodeURIComponent(w)}`:''}&travelmode=walking`; };
@@ -667,7 +667,7 @@ document.addEventListener('click',e=>{
 
 /* ---------- Credits ---------- */
 (function credits(){
-  $('#creditList').innerHTML=Object.entries(P).map(([k,p])=>`<li>${esc(p.label||k)}: <a href="${esc(p.page)}" target="_blank" rel="noopener">${esc(p.title||'Wikimedia Commons')}</a> · ${esc(p.author||'ไม่ระบุ')} · ${p.licurl?`<a href="${esc(p.licurl)}" target="_blank" rel="noopener">${esc(p.license)}</a>`:esc(p.license)}</li>`).join('') || '<li>ยังไม่มีรูป</li>';
+  $('#creditList').innerHTML=Object.entries(P).map(([k,p])=>p.own?`<li>${esc(p.label||k)}: ภาพถ่ายจากเจ้าของทริป</li>`:`<li>${esc(p.label||k)}: <a href="${esc(p.page)}" target="_blank" rel="noopener">${esc(p.title||'Wikimedia Commons')}</a> · ${esc(p.author||'ไม่ระบุ')} · ${p.licurl?`<a href="${esc(p.licurl)}" target="_blank" rel="noopener">${esc(p.license)}</a>`:esc(p.license)}</li>`).join('') || '<li>ยังไม่มีรูป</li>';
   $('#creditCount').textContent=`· ${Object.keys(P).length} รูป`;
   $('#verLine').textContent=`เวอร์ชัน ${window.APP_VERSION}`;
 })();

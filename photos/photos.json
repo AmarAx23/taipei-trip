@@ -251,5 +251,14 @@
   "author": "Luca Mascaro",
   "license": "CC BY-SA 2.0",
   "licurl": "https://creativecommons.org/licenses/by-sa/2.0"
+ },
+ "zhucun": {
+  "file": "zhucun.jpg",
+  "w": 960,
+  "h": 891,
+  "label": "Zhucun Izakaya 竹村居酒屋",
+  "own": true,
+  "author": "ภาพจากเจ้าของทริป",
+  "license": "ใช้ส่วนตัว"
  }
 }
