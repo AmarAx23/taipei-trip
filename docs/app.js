@@ -226,7 +226,7 @@ const maps = {};
     const wps = pts.slice(1,-1).slice(0,9).join('|');
     const gdir = `https://www.google.com/maps/dir/?api=1&origin=${pts[0]}&destination=${pts[pts.length-1]}${wps?`&waypoints=${encodeURIComponent(wps)}`:''}`;
     let n=0;
-    const legs = d.stops.map((s,j)=> s.skip_route ? '' : `<button type="button" class="mleg${s.hotel?' h':''}" data-day="${i}" data-j="${j}"><b>${s.hotel?'🏨':(++n)}</b>${esc(s.name.replace(/^โรงแรม: /,''))}</button>`).join('');
+    const legs = d.stops.map((s,j)=> s.skip_route ? '' : `<button type="button" class="mleg${s.hotel?' h':''}" data-day="${i}" data-j="${j}"><b>${s.hotel?'🏨':(++n)}</b><span>${esc(s.name.replace(/^(โรงแรม: |อาหารเช้า |ซื้อของฝาก |ชานมไข่มุกเจ้าแรก |ช้อปปิ้ง)/,'').split(/ \+ | สาขา| → /)[0].trim())}</span></button>`).join('');
     return `<article class="day" id="day${i+1}" role="tabpanel" aria-label="วันที่ ${i+1}" data-i="${i}">
       <div class="dayhead"><div class="num">${i+1}</div><div class="dh-txt"><h3>${esc(d.title)}</h3><p>${WDL[dt.getUTCDay()]} ${dt.getUTCDate()} ${MO[dt.getUTCMonth()]} ${dt.getUTCFullYear()}${d.note?` · ${esc(d.note)}`:''}</p></div><div class="dicon" aria-hidden="true">${icons[i%icons.length]}</div></div>
       <figure class="dmap" id="dmap${i}">
@@ -272,7 +272,7 @@ const maps = {};
   };
   tabEls.forEach(t=>t.addEventListener('click',()=>goDay(+t.dataset.i)));
   let st; days.addEventListener('scroll',()=>{ clearTimeout(st); st=setTimeout(()=>{ const i=Math.round(days.scrollLeft/days.clientWidth); if(i!==cur) sel(i); },90); },{passive:true});
-  addEventListener('resize',()=>{ days.scrollLeft = cur*days.clientWidth; Object.values(maps).forEach(m=>m.map&&m.map.invalidateSize()); });
+  window.__lw=innerWidth; addEventListener('resize',()=>{ days.scrollLeft = cur*days.clientWidth; const wNow=innerWidth, refit=wNow!==window.__lw; window.__lw=wNow; clearTimeout(window.__rz); window.__rz=setTimeout(()=>Object.values(maps).forEach(m=>{ if(!m.map) return; m.map.invalidateSize(); if(refit&&m.bounds) m.map.fitBounds(m.bounds); }),150); });
 
   /* Schematic fallback */
   T.days.forEach((d,i)=>{
@@ -305,9 +305,9 @@ const maps = {};
     d.stops.forEach((s,j)=>{ if(s.hotel||s.skip_route) return; k++;
       markers[j]=mk(s.lat,s.lon,k,'',.15+k*.12).bindPopup(`<b>${esc(s.time)} ${esc(s.name)}</b><br><span lang="zh-TW">${esc(s.local)}</span>`); });
     d.stops.forEach(s=>s.spots?.forEach((x,m)=>{ mk(x.lat,x.lon,String.fromCharCode(65+m),'sp',.5+m*.08).bindPopup(`<b>${String.fromCharCode(65+m)} · ${esc(x.name)}</b><br><span lang="zh-TW">${esc(x.local)}</span><br><a href="${gmap(x.lat,x.lon,x.local)}" target="_blank" rel="noopener">เปิดใน Google Maps</a>`); }));
-    map.fitBounds(L.latLngBounds(line).pad(0.15));
+    const bounds=L.latLngBounds(line).pad(0.15); map.fitBounds(bounds);
     requestAnimationFrame(()=>{ const path=pl.getElement(); if(path && path.getTotalLength && !RM){ const len=Math.ceil(path.getTotalLength()); path.style.setProperty('--len',len); path.classList.add('route-draw'); path.addEventListener('animationend',()=>path.classList.add('done'),{once:true}); } else if(path) path.classList.add('route-draw','done'); });
-    maps[i]={map,markers};
+    maps[i]={map,markers,bounds};
   }
   /* Legend chip → fly to pin + flash the event */
   days.addEventListener('click',e=>{

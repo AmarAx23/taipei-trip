@@ -224,11 +224,14 @@ html.ios-app .dtabs{top:env(safe-area-inset-top,0px)}
 html.mfs-open,html.mfs-open body{overflow:hidden}
 html.mfs-open .bnav{display:none}
 .dmap figcaption{padding:8px 10px 10px;border-top:1px solid var(--line);background:var(--card)}
-.mlegs{display:flex;flex-wrap:wrap;gap:6px}
-.mleg{font-size:12px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:2px 10px 2px 3px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
-.mleg b{width:18px;height:18px;border-radius:50%;background:var(--red);color:var(--on-red);font-size:11px;display:grid;place-items:center}
+.mlegs{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:6px}
+.mleg{font-size:12px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:2px 10px 2px 3px;cursor:pointer;display:flex;align-items:center;gap:6px;min-width:0;text-align:left}
+.mleg span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.mleg b{flex:none;width:18px;height:18px;border-radius:50%;background:var(--red);color:var(--on-red);font-size:11px;display:grid;place-items:center}
 .mleg.h b{background:var(--navy-2)}
 .mall{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.mall a{flex:1;text-align:center}
+.dmap figcaption small{display:block;margin-top:6px;font-size:11px;line-height:1.45;color:var(--muted)}
 .mall a{font-size:12px;font-weight:600;text-decoration:none;border-radius:999px;padding:4px 11px;border:1px solid var(--line);line-height:1.5;background:var(--tab-on);color:#fff}
 .dmap small{display:block;font-size:11px;color:var(--muted);margin-top:6px}
 .pin{width:26px;height:26px;border-radius:50%;background:var(--red);color:var(--on-red);display:grid;place-items:center;font:600 12px var(--body);border:2.5px solid var(--card);box-shadow:0 2px 6px rgba(0,0,0,.3);animation:mpop .4s cubic-bezier(.3,1.6,.5,1) both;animation-delay:var(--pd,0s)}
@@ -588,6 +591,8 @@ html.mfs-open .bnav{display:none}
   .chips{margin-top:10px}
   .dtabs{padding:5px 2px}
   .dtab{padding-block:4px}
+  .dmap .lmap,.schematic{height:min(250px,58vh)}
+  .mlegs{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
 }
 @media print{
   /* Zero page margin stops the browser printing date, title, URL and page numbers */
