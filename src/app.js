@@ -219,6 +219,7 @@ const maps = {};
           <small>เส้นทางเริ่มจากที่พัก · แผนที่ส่วนที่เคยเปิดตอนมีเน็ตจะจำไว้ใช้ออฟไลน์ ถ้าโหลดไม่ได้จะแสดงแผนผังแทน</small></figcaption>
       </figure>
       ${d.transport?`<details class="tdrop"><summary>${esc(d.transport.summary)}</summary><p>${esc(d.transport.intro)}</p>${d.transport.options.map(o=>`<div class="topt"><b>${esc(o.title)}</b> <span class="tag gold">${esc(o.tag)}</span><ul>${o.bullets.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`).join('')}<p class="fine">${esc(d.transport.footnote)}</p></details>`:''}
+      ${d.booking?`<details class="tdrop bk"><summary>${esc(d.booking.summary)}</summary><ol class="bk-steps">${d.booking.steps.map(x=>`<li><b>${esc(x.title)}</b><p>${esc(x.text)}</p>${x.links?`<div class="links">${x.links.map(l=>`<a href="${esc(l[1])}" target="_blank" rel="noopener">${esc(l[0])} ↗</a>`).join('')}</div>`:''}</li>`).join('')}</ol><div class="bk-copy"><b>ข้อความสำหรับช่องหมายเหตุ</b><pre id="bkText${i}">${esc(d.booking.copy)}</pre><button type="button" class="btn" data-copy="bkText${i}">📋 คัดลอกข้อความ</button></div></details>`:''}
       ${d.rain?`<div class="note rain"><span>☔</span><span><b>แผนสำรองฝนตก</b> · ${esc(d.rain)}</span></div>`:''}
       <ol class="tl">${(()=>{ let k=0; return d.stops.map((s,j)=>{
         const p = s.skip_photo ? null : photo(s.photo); const num = (s.hotel||s.skip_route)?'':++k;
@@ -329,6 +330,11 @@ const maps = {};
   requestAnimationFrame(()=>{ if(ti>=0) goDay(ti,false,false); else { initMap(0); progress(); } });
   setInterval(todayMode,60000);
 })();
+
+/* Copy buttons (booking remarks) */
+document.addEventListener('click',async e=>{ const b=e.target.closest('[data-copy]'); if(!b) return; const el=document.getElementById(b.dataset.copy);
+  try{ await navigator.clipboard.writeText(el.textContent); toast('คัดลอกแล้ว ไปวางในช่องหมายเหตุได้เลย'); }
+  catch(err){ const r=document.createRange(); r.selectNodeContents(el); const sel=getSelection(); sel.removeAllRanges(); sel.addRange(r); toast('เลือกข้อความแล้ว กดคัดลอกเองได้เลย'); } });
 
 /* ---------- Currency ---------- */
 (async function money(){

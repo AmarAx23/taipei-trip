@@ -177,6 +177,15 @@ html.ios-app .dtabs{top:env(safe-area-inset-top,0px)}
 .topt b{font-size:13.5px;color:var(--navy)}
 .topt ul{margin:4px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:2px;line-height:1.5}
 .tdrop .fine{margin:2px 0 0}
+.bk{margin-top:8px}
+.bk-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;counter-reset:bk}
+.bk-steps li{counter-increment:bk;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 10px 8px 42px;position:relative}
+.bk-steps li::before{content:counter(bk);position:absolute;left:10px;top:9px;width:22px;height:22px;border-radius:50%;background:var(--tab-on);color:#fff;display:grid;place-items:center;font:600 12px var(--head)}
+.bk-steps b{font-size:13.5px;color:var(--navy)}
+.bk-steps p{margin:2px 0 0;line-height:1.5}
+.bk-copy{margin-top:10px;background:var(--card);border:1px dashed var(--gold);border-radius:12px;padding:10px}
+.bk-copy b{font-size:13px;color:var(--navy)}
+.bk-copy pre{white-space:pre-wrap;overflow-wrap:anywhere;font:12.5px/1.5 var(--body);background:var(--bg);border-radius:8px;padding:8px 10px;margin:6px 0 8px;user-select:all}
 .note.rain{background:color-mix(in srgb,var(--navy-2) 10%,var(--card));line-height:1.5}
 .tips li{align-items:flex-start}
 .tips .ic{background:var(--gold-soft)}

@@ -380,6 +380,46 @@
           }
         ],
         "footnote": "ราคาทั้งหมดเป็นตัวเลขตลาดโดยประมาณ ควรเทียบราคาตอนจองจริง"
+      },
+      "booking": {
+        "summary": "📋 วิธีจองเหมารถ (Klook / KKday)",
+        "steps": [
+          {
+            "title": "เลือกแพ็กเกจที่รับจากไทเป",
+            "text": "ค้นในแอปว่า \"Taipei car charter Jiufen\" หรือ \"台北包車 九份\" แล้วเลือกแพ็กเกจที่รับจากโรงแรมในไทเป · ถ้าเลือกแพ็กเกจที่เริ่มจากจีหลง ต้องจ่ายเพิ่มเป็นเงินสดสำหรับการมารับที่ไทเป",
+            "links": [
+              [
+                "Klook: รับจากไทเป",
+                "https://www.klook.com/activity/9909-popular-sightseeing-charter-tour-taipei/"
+              ],
+              [
+                "Klook: แพ็กเกจจีหลง",
+                "https://www.klook.com/activity/85477-keelung-private-car-charter"
+              ],
+              [
+                "ค้นใน KKday",
+                "https://www.kkday.com/th/product/productlist?keyword=%E5%8F%B0%E5%8C%97%20%E5%8C%85%E8%BB%8A%20%E4%B9%9D%E4%BB%BD"
+              ]
+            ]
+          },
+          {
+            "title": "เลือกรถ 9 ที่นั่ง",
+            "text": "รถเก๋ง 5 ที่นั่งรับได้สูงสุด 4 คนพอดี นั่งหลัง 3 คนทั้งวันจะอึดอัด · ราคาตัวอย่าง Klook: 5 ที่นั่ง 8 ชม. ~US$137 · 9 ที่นั่ง 8 ชม. ~US$158 หาร 4 แล้วต่างกันคนละไม่กี่สิบบาท (ราคาเปลี่ยนตามวัน ดูอีกครั้งตอนจอง)"
+          },
+          {
+            "title": "เลือก 10 ชั่วโมง",
+            "text": "ให้รถมารับ 08:30 ส่งกลับไม่เกิน 18:30 · หรือเลือก 8 ชม. แล้วจ่ายชั่วโมงเกินหน้างาน ~NT$800/ชม./คัน"
+          },
+          {
+            "title": "กรอกข้อมูลการจอง",
+            "text": "วันที่: เสาร์ 12 ธ.ค. · จุดรับ: Green World Zhonghua, 41 Zhonghua Rd. Sec. 1 · ช่องติดต่อ: ใส่ LINE หรือ WhatsApp เจ้าหน้าที่จะติดต่อมา 1 วันก่อนเดินทาง · ช่องหมายเหตุ: กดคัดลอกข้อความด้านล่างไปวาง"
+          },
+          {
+            "title": "เงื่อนไขที่ควรรู้",
+            "text": "ยกเลิกฟรีก่อนเดินทาง ≥24 ชม. · เลื่อนวันต้องแจ้งก่อน ≥7 วัน · ค่ารับนอกเขตและชั่วโมงเกินจ่ายคนขับเป็นเงินสด พกเงินไต้หวันติดไว้"
+          }
+        ],
+        "copy": "Pickup 08:30 at Green World Zhonghua Hotel (洛碁大飯店中華館), No. 41, Sec. 1, Zhonghua Rd., Taipei.\nItinerary: Heping Island Park (和平島地質公園) → Zhengbin Fishing Port colorful houses (正濱漁港彩色屋, lunch here) → Jiufen Old Street (九份老街) until about 17:30 → return to the same hotel.\n4 adults, no large luggage. Thank you!"
       }
     },
     {
