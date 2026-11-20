@@ -905,6 +905,10 @@ document.addEventListener('click',e=>{
         docs.sort((a,b)=>a.at<b.at?-1:1);
         const mineIds=new Set(list.map(w=>w.id));
         remote=docs.filter(w=>!mineIds.has(w.id)).slice(-200); ls.set('lanternsRemote',remote);
+        /* lanterns deleted in the Firebase console disappear here too */
+        const onServer=new Set(docs.map(w=>w.id));
+        const gone=list.filter(w=>!w.p&&!onServer.has(w.id)); if(gone.length){ list=list.filter(w=>!gone.includes(w)); save(); }
+        for(let q=live.length-1;q>=0;q--){ const o=live[q]; if(o.w.id&&!o.w.p&&!onServer.has(o.w.id)){ o.el.remove(); live.splice(q,1); shown.delete(o.w.id); } }
         remote.forEach(w=>{ if(!shown.has(w.id)){ addMine(w,true); } }); place();
       }
     }catch(_){}
