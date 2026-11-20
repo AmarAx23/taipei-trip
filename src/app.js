@@ -187,7 +187,7 @@ const WMO = c => c===0?['☀️','แดด']:c<=2?['🌤️','เมฆบ้�
   const h=T.hotel;
   $('#hotelCard').innerHTML=`<div class="card hotel rv"><h3 style="color:var(--navy)">🏨 ${esc(h.name)} <span class="tag gold">ที่พัก</span></h3><div class="zh" lang="zh-TW" style="color:var(--muted)">${esc(h.name_local)}</div>
     <dl><dt>ที่อยู่</dt><dd>${esc(h.address)}<br><span lang="zh-TW">${esc(h.address_local)}</span></dd><dt>โทร</dt><dd style="user-select:all">${esc(h.phone)}</dd><dt>เวลา</dt><dd>เช็คอิน ${esc(h.checkin)} · เช็คเอาท์ ${esc(h.checkout)}</dd></dl>
-    <div class="links"><a href="${gmap(h.lat,h.lon,h.address_local)}" target="_blank" rel="noopener">📍 Google Maps</a><a href="${amap(h.lat,h.lon,h.name_local)}" target="_blank" rel="noopener">🍎 Apple Maps</a><button type="button" data-drv="hotel">🚕 การ์ดคนขับ</button></div></div>`;
+    <div class="links"><a href="${gmap(h.lat,h.lon,h.address_local)}" target="_blank" rel="noopener">📍 Google</a><a href="${amap(h.lat,h.lon,h.name_local)}" target="_blank" rel="noopener">🍎 Apple</a><button type="button" data-drv="hotel">🚕 คนขับ</button></div></div>`;
 })();
 
 /* ---------- Plan ---------- */
@@ -233,7 +233,7 @@ const maps = {};
             ${s.spots?.length?`<ol class="spots">${s.spots.map((x,m)=>`<li><a href="${x.gurl||gmap(x.lat,x.lon,x.local)}" target="_blank" rel="noopener"><b>${String.fromCharCode(65+m)}</b><span><span class="sn">${esc(x.name)}</span><span class="zh" lang="zh-TW">${esc(x.local)}${x.hours?` · ${esc(x.hours)}`:''}</span></span><i>📍</i></a></li>`).join('')}</ol>
             <div class="links"><a class="walk" href="${walkUrl(s)}" target="_blank" rel="noopener">🚶 เส้นทางเดินผ่านทุกจุด</a></div>`:''}
             ${(s.hours||s.warn)?`<div class="tags">${s.hours?`<span class="tag gold">🕒 ${esc(s.hours)}</span>`:''}${s.warn?`<span class="tag">⚠️ ${esc(s.warn)}</span>`:''}</div>`:''}
-            <div class="links"><a href="${s.gurl||gmap(s.lat,s.lon,s.q||s.local)}" target="_blank" rel="noopener">📍 Google Maps</a><a href="${amap(s.lat,s.lon,s.local)}" target="_blank" rel="noopener">🍎 Apple</a><button type="button" data-drv="${i}-${j}">🚕 การ์ดคนขับ</button></div>
+            <div class="links"><a href="${s.gurl||gmap(s.lat,s.lon,s.q||s.local)}" target="_blank" rel="noopener">📍 Google</a><a href="${amap(s.lat,s.lon,s.local)}" target="_blank" rel="noopener">🍎 Apple</a><button type="button" data-drv="${i}-${j}">🚕 คนขับ</button></div>
           </div></li>`; }).join(''); })()}</ol>
     </article>`;
   }).join('');

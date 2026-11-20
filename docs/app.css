@@ -63,6 +63,8 @@ html.ios-app body::after{content:"";position:fixed;top:0;left:0;right:0;height:e
 .btn:active{transform:scale(.97)}
 .btn.ghost{background:var(--card);color:var(--navy-2);border:1px solid var(--line)}
 .links{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.evb>.links{gap:5px}
+.evb>.links>*,.card.hotel .links>*{flex:1 1 auto;justify-content:center;white-space:nowrap;padding:4px 7px;gap:3px}
 .links a,.links button,.pill{font-size:12px;font-weight:600;text-decoration:none;color:var(--navy-2);background:var(--gold-soft);border:1px solid var(--line);padding:4px 10px;border-radius:999px;cursor:pointer;transition:transform .12s;display:inline-flex;gap:4px;align-items:center}
 .links a:active,.links button:active,.pill:active{transform:scale(.96)}
 @media (hover:hover){
