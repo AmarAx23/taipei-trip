@@ -857,7 +857,10 @@ document.addEventListener('click',e=>{
     {k:'blue',  a:'#8fd0ff',b:'#2f73c8',zh:'事業',th:'การงาน'},
     {k:'purple',a:'#d1a8ff',b:'#7b46c9',zh:'學業',th:'การเรียน'}];
   const IDEAS=['ขอให้เดินทางปลอดภัย','ไม่มีฝนตกเลย ☀️','กินอร่อยทุกมื้อ 😋','ได้กลับมาไต้หวันอีก','สุขภาพแข็งแรงทุกคน'];
-  let list=ls.get(KEY,[]); const save=()=>ls.set(KEY,list);
+  const FB={key:'AIzaSyBYbpjtC0Snx5_8ftgtrC4MAhzRHWVA560',base:'https://firestore.googleapis.com/v1/projects/taip-a47d8/databases/(default)/documents/lanterns'};
+  const rid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+  let list=ls.get(KEY,[]); list.forEach(w=>{ if(!w.id){ w.id=rid(); w.p=1; } }); const save=()=>ls.set(KEY,list); save();
+  let remote=ls.get('lanternsRemote',[]); const shown=new Set();
   let cur=COLS[0]; let uid=0;
   const small=c=>{ const id='ml'+(++uid); return `<svg viewBox="0 0 30 40"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c.a}"/><stop offset="1" stop-color="${c.b}"/></linearGradient></defs><path d="M5 2h20l4 30H1z" fill="url(#${id})"/><rect x="9" y="9" width="12" height="15" rx="1.5" fill="#F6E3B4" opacity=".9"/><ellipse class="glow" cx="15" cy="34" rx="3" ry="2" fill="#ffd25a"/></svg>`; };
   const big=c=>`<svg viewBox="0 0 300 410" aria-hidden="true"><defs><linearGradient id="lp" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${c.b}"/><stop offset=".5" stop-color="${c.a}"/><stop offset="1" stop-color="${c.b}"/></linearGradient><radialGradient id="lgw" cx=".5" cy=".85" r=".7"><stop offset="0" stop-color="#FFE7A0" stop-opacity=".9"/><stop offset=".55" stop-color="#FFB45A" stop-opacity=".3"/><stop offset="1" stop-color="#FFB45A" stop-opacity="0"/></radialGradient></defs>
@@ -872,6 +875,8 @@ document.addEventListener('click',e=>{
   /* our lanterns drift slowly across the hero sky and loop */
   const live=[];
   function addMine(w,fromLaunch){
+    if(w.id){ if(shown.has(w.id)) return; shown.add(w.id); }
+    if(shown.size>60) return;
     const el=document.createElement('button'); el.type='button'; el.className='ml'; el.setAttribute('aria-label','อ่านคำอธิษฐาน');
     el.innerHTML=small(colOf(w.c));
     const o={el,w,x:10+Math.random()*78,y:fromLaunch?100:25+Math.random()*55,vy:.03+Math.random()*.02,ph:Math.random()*6};
@@ -883,7 +888,30 @@ document.addEventListener('click',e=>{
     if(!RM) for(const o of live){ o.y-=o.vy*dt/16; o.ph+=dt/900; if(o.y<-10){ o.y=104; o.x=10+Math.random()*78; } o.el.style.left=(o.x+Math.sin(o.ph)*3)+'%'; o.el.style.top=o.y+'%'; }
     raf=requestAnimationFrame(loop); }
   function place(){ live.forEach(o=>{ o.el.style.left=o.x+'%'; o.el.style.top=o.y+'%'; }); }
-  list.forEach(w=>addMine(w,false)); place();
+  [...list,...remote].forEach(w=>addMine(w,false)); place();
+  /* Shared sky: lanterns go to Firestore so everyone in the group sees them */
+  const toDoc=w=>({fields:{t:{stringValue:w.t},c:{stringValue:w.c},n:{stringValue:w.n||''},at:{timestampValue:w.at}}});
+  const fromDoc=d=>{ const f=d.fields||{}; return {id:d.name.split('/').pop(),t:f.t?.stringValue||'',c:f.c?.stringValue||'red',n:f.n?.stringValue||'',at:f.at?.timestampValue||''}; };
+  let syncing=false;
+  async function sync(){
+    if(syncing||!navigator.onLine) return; syncing=true;
+    try{
+      for(const w of list.filter(x=>x.p)){
+        const r=await fetch(`${FB.base}?documentId=${encodeURIComponent(w.id)}&key=${FB.key}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(toDoc(w))});
+        if(r.ok||r.status===409){ delete w.p; save(); }
+      }
+      const r=await fetch(`${FB.base}?pageSize=200&key=${FB.key}`); if(r.ok){
+        const docs=((await r.json()).documents||[]).map(fromDoc).filter(w=>w.t);
+        docs.sort((a,b)=>a.at<b.at?-1:1);
+        const mineIds=new Set(list.map(w=>w.id));
+        remote=docs.filter(w=>!mineIds.has(w.id)).slice(-200); ls.set('lanternsRemote',remote);
+        remote.forEach(w=>{ if(!shown.has(w.id)){ addMine(w,true); } }); place();
+      }
+    }catch(_){}
+    syncing=false;
+  }
+  setTimeout(sync,1500); setInterval(()=>{ if(!document.hidden) sync(); },30000);
+  addEventListener('online',sync); document.addEventListener('visibilitychange',()=>{ if(!document.hidden) sync(); });
   if(!RM) raf=requestAnimationFrame(loop);
   document.addEventListener('visibilitychange',()=>{ if(document.hidden){ cancelAnimationFrame(raf); raf=0; } else if(!raf&&!RM){ last=performance.now(); raf=requestAnimationFrame(loop); } });
 
@@ -893,7 +921,7 @@ document.addEventListener('click',e=>{
   $('#lanCols').onclick=e=>{ const b=e.target.closest('button'); if(b) pick(colOf(b.dataset.k)); };
   $('#lanIdeas').innerHTML=IDEAS.map(t=>`<button type="button">${esc(t)}</button>`).join('');
   $('#lanIdeas').onclick=e=>{ if(e.target.tagName==='BUTTON') ta.value=e.target.textContent; };
-  function mine(){ $('#lanMine').innerHTML=list.length?`<b>โคมที่ปล่อยแล้ว ${list.length} ใบ</b> · แตะโคมสีบนฟ้าในหน้าแรกเพื่ออ่าน`:''; }
+  function mine(){ const all=list.length+remote.length; $('#lanMine').innerHTML=all?`<b>บนฟ้าตอนนี้มีโคม ${all} ใบ</b> · ของคุณ ${list.length} ใบ · แตะโคมบนฟ้าในหน้าแรกเพื่ออ่าน`:''; }
   function open(){ pick(cur); ta.value=''; B.className='lan-big'; B.style.transform=''; mine(); sheet.hidden=false; document.documentElement.classList.add('mfs-open'); }
   $('#lanBtn').onclick=open;
   document.addEventListener('click',e=>{ if(e.target.closest('[data-lan]')) open(); });
@@ -901,7 +929,7 @@ document.addEventListener('click',e=>{
     if(B.classList.contains('fly')) return;
     const t=ta.value.trim()||ta.placeholder; ta.blur();
     B.classList.add('fly'); try{navigator.vibrate?.(20)}catch(_){}
-    setTimeout(()=>{ const w={t,c:cur.k,n:nm.value.trim(),at:new Date().toISOString()}; list.push(w); save(); closeAll(); addMine(w,true); place();
+    setTimeout(()=>{ const w={id:rid(),p:1,t,c:cur.k,n:nm.value.trim(),at:new Date().toISOString()}; list.push(w); save(); closeAll(); addMine(w,true); place(); sync();
       if(RM) place(); scrollTo({top:0,behavior:'smooth'}); toast('🏮 ปล่อยโคมแล้ว ดูโคมลอยอยู่บนฟ้าด้านบน'); },1800);
   }
   $('#lanSend').onclick=launch;
