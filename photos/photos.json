@@ -240,5 +240,16 @@
   "author": "Yun Huang Yong",
   "license": "CC BY 2.0",
   "licurl": "https://creativecommons.org/licenses/by/2.0"
+ },
+ "ganmei": {
+  "file": "ganmei.jpg",
+  "w": 960,
+  "h": 640,
+  "label": "เสี่ยวหลงเปาทอดในกระทะ (ภาพตัวอย่าง ไม่ใช่ร้านจริง)",
+  "title": "Shengjian Mantou on a Pan.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Shengjian_Mantou_on_a_Pan.jpg",
+  "author": "Luca Mascaro",
+  "license": "CC BY-SA 2.0",
+  "licurl": "https://creativecommons.org/licenses/by-sa/2.0"
  }
 }
