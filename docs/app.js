@@ -490,7 +490,7 @@ function bigShow(text, sub){ $('#bigText').textContent=text; $('#bigSub').textCo
 })();
 
 /* ---------- Overlays ---------- */
-function closeAll(){ ['#bigView','#lightbox','#sumSheet','#installSheet','#stampSheet','#lanSheet'].forEach(s=>$(s).hidden=true); document.documentElement.classList.remove('mfs-open'); }
+function closeAll(){ ['#bigView','#lightbox','#sumSheet','#installSheet','#stampSheet','#lanSheet','#qrSheet'].forEach(s=>$(s).hidden=true); document.documentElement.classList.remove('mfs-open'); }
 document.addEventListener('click',e=>{ if(e.target.closest('[data-close]') || e.target.id==='lightbox') closeAll(); });
 addEventListener('keydown',e=>{ if(e.key==='Escape') closeAll(); });
 /* Lightbox grows from the thumbnail's own position */
@@ -911,5 +911,11 @@ document.addEventListener('click',e=>{
   const end=e=>{ if(sy==null) return; const d=e.clientY-sy; sy=null; if(d<-70) launch(); else B.style.transform=''; };
   B.addEventListener('pointerup',end); B.addEventListener('pointercancel',()=>{ sy=null; B.style.transform=''; });
 })();
+
+
+/* ---------- QR to open the site ---------- */
+$('#qrBtn').onclick=()=>{ $('#qrSheet').hidden=false; };
+$('#qrSheet').addEventListener('click',e=>{ if(e.target.id==='qrSheet') closeAll(); });
+$('#qrShare').onclick=()=>$('#shareBtn').click();
 
 })();
