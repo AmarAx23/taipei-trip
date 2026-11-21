@@ -135,33 +135,58 @@ let fwShow=()=>{};
   tick(); setInterval(tick, 1000);
 })();
 
-/* ---------- Weather (Open-Meteo) ---------- */
+/* ---------- Weather: CWA (Taiwan's weather bureau) first, Open-Meteo before CWA reaches the trip ---------- */
 const WMO = c => c===0?['☀️','แดด']:c<=2?['🌤️','เมฆบ้าง']:c===3?['☁️','เมฆมาก']:c<=48?['🌫️','หมอก']:c<=57?['🌦️','ฝนปรอย']:c<=67?['🌧️','ฝน']:c<=77?['🌨️','หิมะ']:c<=82?['🌧️','ฝนเป็นช่วง']:['⛈️','พายุ'];
+const CWAI = c => c===1?['☀️','แดด']:c<=3?['🌤️','แดดสลับเมฆ']:c<=7?['☁️','เมฆมาก']:c<=11?['🌦️','ฝนเป็นช่วง']:c<=14?['🌧️','ฝน']:c<=22?['⛈️','ฝนฟ้าคะนอง']:c===23||c===42?['🌨️','หิมะ']:c<=28?['🌫️','หมอก']:['🌧️','ฝน'];
 (async function weather(){
   const box=$('#wx'), sub=$('#wxSub');
-  const tripDates = new Set(T.days.map(d=>d.date));
-  const render = (data, stamp) => {
-    const d = data.daily; const today = localNow().date;
-    const toStart = Math.round((parseD(T.trip.start) - parseD(today))/86400000);
-    const C = T.trip.climate || {hi:20, lo:15, rain:40};
-    // Always the trip days only: real forecast once it reaches them, monthly average before that
-    box.innerHTML = T.days.map((day,k)=>{
-      const i = d ? d.time.indexOf(day.date) : -1;
-      if (i < 0) return `<div style="--i:${k}"><div class="d">${fmtD(day.date)}</div><div class="i" title="ค่าเฉลี่ย">🌥️</div><div class="t">~${C.hi}° <small>${C.lo}°</small></div><div class="r">☔ ~${C.rain}%</div></div>`;
-      const [ic,txt]=WMO(d.weather_code[i]);
-      return `<div class="trip" style="--i:${k}"><div class="d">${fmtD(day.date)}</div><div class="i" title="${txt}">${ic}</div><div class="t">${Math.round(d.temperature_2m_max[i])}° <small>${Math.round(d.temperature_2m_min[i])}°</small></div><div class="r">☔ ${d.precipitation_probability_max[i] ?? '–'}%</div></div>`;
-    }).join('');
-    const got = d && T.days.some(day=>d.time.includes(day.date));
-    sub.innerHTML = got ? `พยากรณ์จริง${stamp?`<small>อัปเดต ${esc(stamp)}</small>`:''}` : `ค่าเฉลี่ยเดือนธันวาคม${toStart>15?`<small>พยากรณ์จริงมาในอีก ~${toStart-15} วัน</small>`:''}`;
+  const CWA_KEY='CWA-C4D89E8A-D414-46B9-BBEB-8B4B6EFAB8F8';
+  /* Day 3 is out of town: use Ruifang (Jiufen) district; the rest use Zhongzheng, Taipei (hotel) */
+  const AREA=[{id:'F-D0047-063',loc:'中正區',th:'ไทเป'},{id:'F-D0047-071',loc:'瑞芳區',th:'จิ่วเฟิ่น'}];
+  const areaOf=k=>/จิ่วเฟิ่น|Jiufen|九份/.test(JSON.stringify(T.days[k].stops.map(s=>s.name)))?1:0;
+  const toDays=json=>{ // CWA 12-hour periods → per-date max/min/rain/code
+    const out={}; const w=json?.records?.Locations?.[0]?.Location?.[0]?.WeatherElement||[];
+    const get=n=>w.find(e=>e.ElementName===n)?.Time||[];
+    const add=(n,f)=>get(n).forEach(t=>{ const dt=t.StartTime.slice(0,10), h=+t.StartTime.slice(11,13); const o=out[dt]||(out[dt]={}); f(o,t.ElementValue[0],h); });
+    add('最高溫度',(o,v)=>{ const x=+v.MaxTemperature; if(!isNaN(x)) o.hi=Math.max(o.hi??-99,x); });
+    add('最低溫度',(o,v)=>{ const x=+v.MinTemperature; if(!isNaN(x)) o.lo=Math.min(o.lo??99,x); });
+    add('12小時降雨機率',(o,v)=>{ const x=+v.ProbabilityOfPrecipitation; if(v.ProbabilityOfPrecipitation!=='-'&&!isNaN(x)) o.rain=Math.max(o.rain??0,x); });
+    add('天氣現象',(o,v,h)=>{ if(o.code==null||(h>=6&&h<18)){ o.code=+v.WeatherCode; o.txt=v.Weather; } });
+    return out;
   };
-  const cached = ls.get('wx', null);
-  render(cached ? cached.data : {daily:null}, cached ? cached.stamp + ' · ข้อมูลเก่า' : '');
-  try{
-    const u = `https://api.open-meteo.com/v1/forecast?latitude=${T.trip.lat}&longitude=${T.trip.lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=${encodeURIComponent(T.trip.tz)}&forecast_days=16`;
-    const r = await fetch(u); if(!r.ok) throw 0; const data = await r.json();
-    const stamp = new Date().toLocaleString('th-TH',{dateStyle:'short',timeStyle:'short'});
-    ls.set('wx',{data,stamp}); render(data, stamp);
-  }catch(e){}
+  const render=(om,cwa,stamp)=>{
+    const d=om?.daily; const today=localNow().date;
+    const toStart=Math.round((parseD(T.trip.start)-parseD(today))/86400000);
+    const C=T.trip.climate||{hi:20,lo:15,rain:40};
+    let src=new Set();
+    box.innerHTML=T.days.map((day,k)=>{
+      const ar=areaOf(k), c=cwa?.[ar]?.[day.date];
+      const place=ar?`<div class="wx-at">📍 ${AREA[ar].th}</div>`:'';
+      if(c&&c.hi!=null){ src.add('CWA'); const [ic,txt]=CWAI(c.code); return `<div class="trip" style="--i:${k}"><div class="d">${fmtD(day.date)}</div>${place}<div class="i" title="${esc(c.txt||txt)}">${ic}</div><div class="t">${c.hi}° <small>${c.lo}°</small></div><div class="r">☔ ${c.rain!=null?c.rain+'%':'–'}</div><div class="wx-src">CWA</div></div>`; }
+      const i=d?d.time.indexOf(day.date):-1;
+      if(i>=0){ src.add('OM'); const [ic,txt]=WMO(d.weather_code[i]); return `<div class="trip" style="--i:${k}"><div class="d">${fmtD(day.date)}</div>${place}<div class="i" title="${txt}">${ic}</div><div class="t">${Math.round(d.temperature_2m_max[i])}° <small>${Math.round(d.temperature_2m_min[i])}°</small></div><div class="r">☔ ${d.precipitation_probability_max[i]??'–'}%</div><div class="wx-src">Open-Meteo</div></div>`; }
+      return `<div style="--i:${k}"><div class="d">${fmtD(day.date)}</div>${place}<div class="i" title="ค่าเฉลี่ย">🌥️</div><div class="t">~${C.hi}° <small>${C.lo}°</small></div><div class="r">☔ ~${C.rain}%</div><div class="wx-src">ค่าเฉลี่ย</div></div>`;
+    }).join('');
+    const st=stamp?`<small>อัปเดต ${esc(stamp)}</small>`:'';
+    sub.innerHTML = src.has('CWA') ? `${src.has('OM')?'CWA + Open-Meteo':'กรมอุตุฯ ไต้หวัน (CWA)'}${st}`
+      : src.has('OM') ? `พยากรณ์ Open-Meteo<small>CWA มาเมื่อเหลือ ≤7 วัน${toStart>7?` (อีก ~${toStart-7} วัน)`:''}</small>`
+      : `ค่าเฉลี่ยเดือนธันวาคม${toStart>15?`<small>พยากรณ์จริงมาในอีก ~${toStart-15} วัน</small>`:''}`;
+  };
+  const cached=ls.get('wx',null), cc=ls.get('cwa',null);
+  render(cached?.data, cc?.days, cached?(cached.stamp+' · ข้อมูลเก่า'):'');
+  const stamp=()=>new Date().toLocaleString('th-TH',{dateStyle:'short',timeStyle:'short'});
+  let om=cached?.data, cw=cc?.days;
+  const omP=(async()=>{ try{
+    const u=`https://api.open-meteo.com/v1/forecast?latitude=${T.trip.lat}&longitude=${T.trip.lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=${encodeURIComponent(T.trip.tz)}&forecast_days=16`;
+    const r=await fetch(u); if(!r.ok) throw 0; om=await r.json(); ls.set('wx',{data:om,stamp:stamp()}); render(om,cw,stamp());
+  }catch(e){} })();
+  const cwP=(async()=>{ try{
+    const els=encodeURIComponent('最高溫度,最低溫度,12小時降雨機率,天氣現象');
+    const res=await Promise.all(AREA.map(a=>fetch(`https://opendata.cwa.gov.tw/api/v1/rest/datastore/${a.id}?Authorization=${CWA_KEY}&format=JSON&LocationName=${encodeURIComponent(a.loc)}&ElementName=${els}`).then(r=>r.ok?r.json():null).catch(()=>null)));
+    if(res.every(x=>!x)) return;
+    cw=res.map(toDays); ls.set('cwa',{days:cw,stamp:stamp()}); render(om,cw,stamp());
+  }catch(e){} })();
+  await Promise.all([omP,cwP]);
 })();
 
 /* ---------- Boarding passes ---------- */
