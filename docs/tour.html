@@ -236,26 +236,30 @@ body.incity #map{background:#f4eee2}
 .trav{width:16px;height:16px;border-radius:50%;background:var(--gold2);border:2px solid #fff;box-shadow:0 0 0 6px #e9cf9555,0 4px 10px #0008;display:grid;place-items:center;font-size:15px;line-height:1}
 .trav span{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);font-size:20px;filter:drop-shadow(0 2px 3px #0008)}
 /* the two of us: head stickers riding the route */
-.duo{position:relative;width:96px;height:78px;pointer-events:none;transition:translate .5s cubic-bezier(.3,1.3,.5,1)}
-.duo.at{translate:-64px 40px}
-.duo .dot{position:absolute;left:50%;bottom:-6px;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:var(--gold2);border:2px solid #fff;box-shadow:0 0 0 5px #e9cf9555,0 3px 8px #0007}
-.duo img{position:absolute;bottom:8px;height:58px;width:auto;filter:drop-shadow(0 4px 5px #0007);transform-origin:50% 100%;transition:bottom .35s,height .35s}
+.duo{position:relative;width:76px;height:44px;pointer-events:none;transition:translate .5s cubic-bezier(.3,1.3,.5,1)}
+.duo.at{translate:-50px 24px}
+.duo .dot{position:absolute;left:50%;bottom:-5px;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:var(--gold2);border:2px solid #fff;box-shadow:0 0 0 4px #e9cf9555,0 3px 8px #0007}
+.duo img{position:absolute;bottom:6px;height:30px;width:auto;filter:drop-shadow(0 3px 3px #0006);transform-origin:50% 100%;transition:bottom .35s,height .35s}
 .duo .ha{left:2px;z-index:1}
-.duo .hb{left:40px;z-index:2}
-.duo .veh{position:absolute;left:50%;bottom:-4px;transform:translateX(-50%) scale(0);font-size:42px;line-height:1;filter:drop-shadow(0 3px 4px #0007);transition:transform .35s cubic-bezier(.3,1.5,.5,1);z-index:3}
+.duo .hb{left:20px;z-index:2}
+.duo .hc{left:38px;z-index:3}
+.duo .hd{left:56px;z-index:4}
+.duo .veh{position:absolute;left:50%;bottom:-4px;transform:translateX(-50%) scale(0);font-size:30px;line-height:1;filter:drop-shadow(0 3px 4px #0007);transition:transform .35s cubic-bezier(.3,1.5,.5,1);z-index:5}
 .duo.walk .ha{animation:bob .38s ease-in-out infinite alternate}
-.duo.walk .hb{animation:bob .38s .19s ease-in-out infinite alternate}
-.duo.car img{bottom:26px;height:44px}
+.duo.walk .hb{animation:bob .38s .1s ease-in-out infinite alternate}
+.duo.walk .hc{animation:bob .38s .19s ease-in-out infinite alternate}
+.duo.walk .hd{animation:bob .38s .28s ease-in-out infinite alternate}
+.duo.car img{bottom:20px;height:24px}
 .duo.car .veh{transform:translateX(-50%) scale(1)}
 .duo.car{animation:rumble .25s linear infinite alternate}
 .duo.hop img{animation:hop .55s cubic-bezier(.3,1.6,.5,1)}
-.duo.hop .hb{animation-delay:.08s}
+.duo.hop .hb{animation-delay:.06s}.duo.hop .hc{animation-delay:.12s}.duo.hop .hd{animation-delay:.18s}
 .duo.at .dot{opacity:0}
-@keyframes bob{from{transform:translateY(0) rotate(-7deg)}to{transform:translateY(-7px) rotate(7deg)}}
+@keyframes bob{from{transform:translateY(0) rotate(-7deg)}to{transform:translateY(-4px) rotate(7deg)}}
 @keyframes rumble{from{transform:translateY(0)}to{transform:translateY(-1.5px)}}
 .duo.car .veh.r{transform:translateX(-50%) scale(-1,1)}
-.duo.train img{bottom:30px;height:40px}
-.duo.train .veh{font-size:50px}
+.duo.train img{bottom:24px;height:22px}
+.duo.train .veh{font-size:36px}
 .duo.train{animation:rumble .18s linear infinite alternate}
 .fp{width:12px;height:12px;pointer-events:none}
 .fp i{position:absolute;left:2.5px;top:0;width:7px;height:11px;border-radius:50% 50% 42% 42%;background:#4a3714;box-shadow:0 0 0 1.5px #fff8;opacity:0;animation:fp 2.6s ease-out forwards}
@@ -267,7 +271,7 @@ body.incity #map{background:#f4eee2}
 @keyframes puff{0%{opacity:.85;transform:translate(0,0) scale(.4)}100%{opacity:0;transform:translate(var(--x),var(--y)) scale(1.5)}}
 
 /* ---- emoji bubble over the heads ---- */
-.duo .bub{position:absolute;left:-40px;bottom:30px;width:44px;height:44px;display:grid;place-items:center;font-size:25px;line-height:1;background:#fffaf0;border-radius:50%;box-shadow:0 6px 16px #0005,0 0 0 2px #e9cf95;z-index:4;animation:bub 3.3s cubic-bezier(.3,1.5,.5,1) forwards}
+.duo .bub{position:absolute;left:-30px;bottom:20px;width:32px;height:32px;display:grid;place-items:center;font-size:18px;line-height:1;background:#fffaf0;border-radius:50%;box-shadow:0 6px 16px #0005,0 0 0 2px #e9cf95;z-index:4;animation:bub 3.3s cubic-bezier(.3,1.5,.5,1) forwards}
 .duo .bub::after{content:"";position:absolute;right:-7px;top:50%;margin-top:-6px;border:6px solid transparent;border-left-color:#fffaf0;border-right:0}
 @keyframes bub{0%{opacity:0;transform:translateY(14px) scale(.2)}14%{opacity:1;transform:translateY(-4px) scale(1.18)}24%{transform:translateY(0) scale(1)}78%{opacity:1;transform:translateY(-6px) scale(1)}100%{opacity:0;transform:translateY(-20px) scale(.9)}}
 /* ---- time of day: tint over the map (markers stay untinted) ---- */
@@ -818,7 +822,7 @@ function story(doneCb) {
   if (head) head.insertAdjacentHTML('beforeend', '<div class="prog">' + stops.map(function () { return '<i><b></b></i>'; }).join('') + '</div>');
   var bars = document.querySelectorAll('.prog b');
   var k = 0, from = d.suzhou ? null : LL(HOTEL), bear = map.getBearing();
-  if (trav) trav.remove(); trav = mk(from || LL(d.pins[0]), '<div class="duo"><i class="dot"></i><img class="ha" alt="" src="img/tour/head-a.png"><img class="hb" alt="" src="img/tour/head-b.png"><span class="veh"></span></div>', { anchor: 'bottom', offset: [0, 6] });
+  if (trav) trav.remove(); trav = mk(from || LL(d.pins[0]), '<div class="duo"><i class="dot"></i><img class="ha" alt="" src="img/tour/head-a.png"><img class="hb" alt="" src="img/tour/head-b.png"><img class="hc" alt="" src="img/tour/head-c.png"><img class="hd" alt="" src="img/tour/head-d.png"><span class="veh"></span></div>', { anchor: 'bottom', offset: [0, 6] });
   trav.getElement().style.zIndex = 5;
   function trainRide(path, cb) {   // heads hop on the high-speed train
     setLine('rail', RAIL); closePop();
