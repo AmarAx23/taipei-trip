@@ -888,7 +888,7 @@ function story(doneCb) {
 function offHTML() {
   var at = null; try { at = JSON.parse(localStorage.getItem('offmap') || 'null'); } catch (e) {}
   return '<div class="offw" id="offw"><button type="button" id="offb"' + (at ? ' class="ok"' : '') + '>' + (at ? '✓ เก็บแผนที่ทั้งหมดไว้ในเครื่องแล้ว · กดเพื่ออัปเดต' : '⬇ เก็บแผนที่ทั้งหมดไว้ในเครื่อง') + '</button><div class="pbar"><i></i></div>' +
-    '<span id="offt">' + (at ? 'เก็บเมื่อ ' + at.d + ' · ราว ' + at.mb + ' MB · เปิดได้แม้ไม่มีเน็ต' : 'กดครั้งเดียวเก็บทั้งแผนที่ทัวร์และแผนที่รายวันในหน้าแผน · กดตอนอยู่ไทยที่มี Wi-Fi (ราว 1–2 นาที) · ถึงจีนแล้วเปิดได้แม้ไม่มี VPN') + '</span></div>';
+    '<span id="offt">' + (at ? 'เก็บเมื่อ ' + at.d + ' · ราว ' + at.mb + ' MB · เปิดได้แม้ไม่มีเน็ต' : 'กดครั้งเดียวเก็บแผนที่ของหน้านี้ทั้งหมด (ราว 60 MB) · กดตอนอยู่ไทยที่มี Wi-Fi (ราว 1–2 นาที) · ถึงไต้หวันแล้วเปิดดูได้แม้ไม่มีเน็ต') + '</span></div>';
 }
 var SAVE_MODE = /[?&]save=1/.test(location.search), offBusy = false;
 function offUI(pc, label, note, state) {   // state: run | ok | fail
