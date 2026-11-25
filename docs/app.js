@@ -428,7 +428,7 @@ function tickFx(input){
   let custom=ls.get('chk_custom',[]), done=ls.get('chk_done',{});
   const draw=()=>{
     const items=[...T.checklist.map(t=>({t,c:false})), ...custom.map(t=>({t,c:true}))];
-    ul.innerHTML=items.map((it,k)=>`<li><label><input type="checkbox" id="chk${k}" data-t="${esc(it.t)}" ${done[it.t]?'checked':''}><span><i class="st">${esc(it.t)}</i></span>${it.c?`<button type="button" class="del" data-del="${esc(it.t)}" aria-label="ลบ">✕</button>`:''}</label></li>`).join('');
+    ul.innerHTML=items.map((it,k)=>`<li><label><input type="checkbox" id="chk${k}" data-t="${esc(it.t)}" ${done[it.t]?'checked':''}><span>${(m=>m?`${m[1]} <i class="st">${esc(m[2])}</i>`:`<i class="st">${esc(it.t)}</i>`)(/^(\p{Extended_Pictographic}\S*)\s+(.+)$/u.exec(it.t))}</span>${it.c?`<button type="button" class="del" data-del="${esc(it.t)}" aria-label="ลบ">✕</button>`:''}</label></li>`).join('');
     const n=items.filter(it=>done[it.t]).length;
     $('#checkSub').textContent=`${n}/${items.length}`;
     $('#checkBar').style.width=(items.length?n/items.length*100:0)+'%';
@@ -996,7 +996,7 @@ $('#qrShare').onclick=()=>$('#shareBtn').click();
   const box=$('#preflight'), L=T.preflight||[]; if(!box||!L.length){ if(box) box.remove(); return; }
   let done=ls.get('pre_done',{});
   const draw=()=>{ const n=L.filter(x=>done[x.id]).length;
-    box.innerHTML=`<div class="pref-h"><b>✅ ต้องทำก่อนบิน</b><span>${n}/${L.length}</span></div><ul class="checklist">${L.map(x=>`<li><label><input type="checkbox" data-pre="${esc(x.id)}" ${done[x.id]?'checked':''}><span><b><i class="st">${x.icon} ${esc(x.title)}</i></b><small><i class="st">${esc(x.when)} · ${esc(x.note)}</i></small></span>${x.link?`<a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.linkText)} ↗</a>`:''}</label></li>`).join('')}</ul>`; };
+    box.innerHTML=`<div class="pref-h"><b>✅ ต้องทำก่อนบิน</b><span>${n}/${L.length}</span></div><ul class="checklist">${L.map(x=>`<li><label><input type="checkbox" data-pre="${esc(x.id)}" ${done[x.id]?'checked':''}><span><b>${x.icon} <i class="st">${esc(x.title)}</i></b><small><i class="st">${esc(x.when)} · ${esc(x.note)}</i></small></span>${x.link?`<a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.linkText)} ↗</a>`:''}</label></li>`).join('')}</ul>`; };
   draw();
   box.addEventListener('change',e=>{ const id=e.target.dataset.pre; if(!id) return; if(e.target.checked) done[id]=1; else delete done[id]; ls.set('pre_done',done); tickFx(e.target);
     const n=L.filter(x=>done[x.id]).length; box.querySelector('.pref-h span').textContent=`${n}/${L.length}`; if(n===L.length&&e.target.checked) setTimeout(()=>toast('✈️ พร้อมบินแล้ว!'),450); });
