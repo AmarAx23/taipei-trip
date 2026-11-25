@@ -403,7 +403,7 @@ document.addEventListener('click',async e=>{ const b=e.target.closest('[data-cop
 
 /* ---------- Tips ---------- */
 (function tips(){
-  $('#tipsCount').textContent=`${(T.tips||[]).length} ข้อ · วีซ่า จองร้าน ตั๋ว 101`;
+  $('#tipsCount').textContent=`${(T.tips||[]).length} ข้อ · ต้องทำก่อนบิน วีซ่า จองร้าน`;
   $('#tips').innerHTML=(T.tips||[]).map(x=>`<li><span class="ic">${x.icon}</span><div class="tx"><b>${esc(x.title)}</b><small>${esc(x.text)}</small>${x.link?`<div class="links"><a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.linkText||'เปิดลิงก์')} ↗</a></div>`:''}</div></li>`).join('');
 })();
 
