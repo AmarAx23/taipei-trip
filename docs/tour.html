@@ -342,6 +342,20 @@ body.incity #map{background:#f4eee2}
   body.storying .prog{grid-column:1/-1;margin-top:8px}
   body.autoplay .storyb{display:none}
 }
+@media(max-width:940px) and (orientation:landscape) and (max-height:500px){
+  /* phone turned sideways: card becomes a side panel so the map stays visible */
+  .card,body.storying .card{left:10px;right:auto;width:min(44vw,360px);top:54px;bottom:calc(var(--barh,64px) + 6px);max-height:none}
+  .cover{height:64px}
+  .head h2{font-size:18px}
+  .bar{flex-wrap:nowrap;padding:6px 10px calc(6px + env(safe-area-inset-bottom));gap:6px}
+  .bar>button{flex:0 0 auto;min-height:36px;font-size:12.5px}
+  .dots{flex:1;width:auto;margin-left:6px}
+  .chapter{left:min(380px,46vw);bottom:30vh}
+  .brand{display:none}
+  body.storying .card{top:auto;bottom:calc(var(--barh,64px) + 6px)}
+  body.storying.peek .card{top:54px}
+  body.storying.peek .card .list{max-height:none}
+}
 @media(prefers-reduced-motion:reduce){</style>
 </head>
 <body>
@@ -597,7 +611,7 @@ function fly(pts, ms, my, done) {
 /* layout padding so the card never hides anything */
 function barH() { var b = $('.bar'); return b ? b.offsetHeight : 150; }
 function fitBar() { document.documentElement.style.setProperty('--barh', barH() + 'px'); }
-function pad(extraTop) { var w = innerWidth, h = innerHeight, p = w <= 820 ? { top: 70, left: 24, right: 24, bottom: document.body.classList.contains('storying') ? barH() + 96 : Math.round(h * .44) + 140 } : { top: 90, left: Math.min(430, w * .38) + 40, right: 60, bottom: 110 }; if (extraTop) p.top += extraTop; return p; }
+function pad(extraTop) { var w = innerWidth, h = innerHeight, land = w > h && h <= 500 && w <= 940, p = land ? { top: 56, left: Math.min(360, w * .44) + 30, right: 24, bottom: barH() + 16 } : w <= 820 ? { top: 70, left: 24, right: 24, bottom: document.body.classList.contains('storying') ? barH() + 96 : Math.round(h * .44) + 140 } : { top: 90, left: Math.min(430, w * .38) + 40, right: 60, bottom: 110 }; if (extraTop) p.top += extraTop; return p; }
 var D3 = false; try { D3 = localStorage.getItem('tour3d') === '1'; } catch (e) {}
 function P_(v) { return D3 ? v : 0; }   // pitch / bearing are 0 in 2D mode
 function fitZoom(lnglats) {
@@ -997,7 +1011,7 @@ function playFrom(i) {
 dots.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) { stop(); go(+b.dataset.i); } });
 $('#next').onclick = function () { stop(); nxt(); };
 $('#prev').onclick = function () { stop(); go(idx - 1); };
-autoB.onclick = function () { if (playing) { stop(); gen++; closePop(); return; } playing = true; document.body.classList.add('autoplay'); autoB.textContent = '❚❚ หยุด'; playFrom(idx === D.length - 1 ? 0 : idx + 1); };
+autoB.onclick = function () { if (playing) { stop(); gen++; closePop(); return; } playing = true; document.body.classList.add('autoplay'); autoB.textContent = '❚❚ หยุด'; playFrom(idx === D.length - 1 && !D[idx].asia ? 0 : idx); };
 document.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight') { stop(); nxt(); } if (e.key === 'ArrowLeft') { stop(); go(idx - 1); } });
 addEventListener('resize', function () { movePill(); fitBar(); });
 // phones: swipe left / right on the card or the control bar to change day
