@@ -693,7 +693,7 @@ function card(d) {
   if (d.ov) {
     c.innerHTML = '<div class="cover"><div class="cv" style="background-image:url(' + (d.cover || '') + ')"></div><div class="chips"><span class="chip">10–13 ธ.ค. 2026</span><span class="chip t">4 วัน 3 คืน</span></div></div>' +
       '<div class="head"><h2>ไทเป + จิ่วเฟิ่น</h2><p class="zh">台北 · 九份</p></div><div class="list ov"><div class="ovl">' +
-      D.slice(1).map(function (x, k) { return '<div class="ovr" style="--i:' + k + '" data-go="' + (k + 1) + '"><span class="ph" style="background-image:url(' + String(x.cover || '').replace('-1280.', '-640.') + ')"></span><span><small>DAY ' + (k < 9 ? '0' : '') + (k + 1) + '</small><b>' + esc(x.h) + '</b></span><em>' + esc(String(x.d).split('·').pop().trim()) + '</em></div>'; }).join('') +
+      D.slice(1).filter(function (x) { return !x.asia; }).map(function (x, k) { return '<div class="ovr" style="--i:' + k + '" data-go="' + (k + 1) + '"><span class="ph" style="background-image:url(' + String(x.cover || '').replace('-1280.', '-640.') + ')"></span><span><small>DAY ' + (k < 9 ? '0' : '') + (k + 1) + '</small><b>' + esc(x.h) + '</b></span><em>' + esc(String(x.d).split('·').pop().trim()) + '</em></div>'; }).join('') +
       '</div><p class="ovsum">ที่พัก <b>Green World Zhonghua</b> ใกล้ซีเหมิน · <b>MRT + EasyCard</b> · <b>EVA BR206 / BR205</b></p>' + offHTML() + '</div>';
     return;
   }
@@ -782,7 +782,7 @@ function go(i, readyCb) {
         if (my !== gen) return;
         marks.forEach(function (m) { m.remove(); }); marks = []; setLine('arc', []);
         chapter('DAY 01', d.h); setNight(false);
-        view(dayPts(d), { maxZoom: 13, pitch: 50, bearing: bear, dur: 3600, curve: 1.8 });
+        view(dayPts(d), { maxZoom: 15.3, pitch: 50, bearing: bear, dur: 3600, curve: 1.8 });
         setTimeout(after, reduce ? 0 : 3200);
       });
     }, reduce ? 0 : 2100);
