@@ -403,7 +403,7 @@ document.addEventListener('click',async e=>{ const b=e.target.closest('[data-cop
 
 /* ---------- Tips ---------- */
 (function tips(){
-  $('#tipsCount').textContent=`${(T.tips||[]).length} ข้อ · ต้องทำก่อนบิน วีซ่า จองร้าน`;
+  $('#tipsCount').textContent=`${(T.tips||[]).length} ข้อ · วีซ่า จองร้าน ตั๋ว 101`;
   $('#tips').innerHTML=(T.tips||[]).map(x=>`<li><span class="ic">${x.icon}</span><div class="tx"><b>${esc(x.title)}</b><small>${esc(x.text)}</small>${x.link?`<div class="links"><a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.linkText||'เปิดลิงก์')} ↗</a></div>`:''}</div></li>`).join('');
 })();
 
@@ -974,5 +974,16 @@ document.addEventListener('click',e=>{
 $('#qrBtn').onclick=()=>{ $('#qrSheet').hidden=false; };
 $('#qrSheet').addEventListener('click',e=>{ if(e.target.id==='qrSheet') closeAll(); });
 $('#qrShare').onclick=()=>$('#shareBtn').click();
+
+
+/* ---------- Before-the-flight to-dos (under the boarding passes) ---------- */
+(function preflight(){
+  const box=$('#preflight'), L=T.preflight||[]; if(!box||!L.length){ if(box) box.remove(); return; }
+  let done=ls.get('pre_done',{});
+  const draw=()=>{ const n=L.filter(x=>done[x.id]).length;
+    box.innerHTML=`<div class="pref-h"><b>✅ ต้องทำก่อนบิน</b><span>${n}/${L.length}</span></div><ul class="checklist">${L.map(x=>`<li><label><input type="checkbox" data-pre="${esc(x.id)}" ${done[x.id]?'checked':''}><span><b>${x.icon} ${esc(x.title)}</b><small>${esc(x.when)} · ${esc(x.note)}</small></span>${x.link?`<a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.linkText)} ↗</a>`:''}</label></li>`).join('')}</ul>`; };
+  draw();
+  box.addEventListener('change',e=>{ const id=e.target.dataset.pre; if(!id) return; if(e.target.checked) done[id]=1; else delete done[id]; ls.set('pre_done',done); draw(); });
+})();
 
 })();

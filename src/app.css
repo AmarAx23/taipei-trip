@@ -355,6 +355,15 @@ html.mfs-open .bnav{display:none}
 .checklist input:checked{background:var(--red);border-color:var(--red)}
 .checklist input:checked::after{transform:scale(1)}
 .checklist input:checked+span{text-decoration:line-through;color:var(--muted)}
+.pref{margin:12px 0}
+.pref-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}
+.pref-h b{font-family:var(--head);font-weight:600;font-size:15px;color:var(--navy)}
+.pref-h span{font-size:12px;color:var(--muted)}
+.pref .checklist li:last-child{border-bottom:0}
+.pref .checklist label>span{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.pref .checklist small{font-size:12px;color:var(--muted);line-height:1.4}
+.pref .checklist a{flex:none;font-size:12px;font-weight:600;text-decoration:none;color:var(--navy);background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:4px 10px;white-space:nowrap}
+.pref .checklist input:checked+span b{text-decoration:line-through;color:var(--muted)}
 .checklist .del{margin-left:auto;border:0;background:none;color:var(--muted);cursor:pointer;font-size:15px}
 .add-check{display:flex;gap:8px;margin-top:12px}
 .add-check input{flex:1;min-width:0;border:1.5px solid var(--line);background:var(--bg);border-radius:999px;padding:8px 14px;outline:none}
