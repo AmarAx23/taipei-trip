@@ -292,6 +292,26 @@ function wxHtml(d) {
 (function () {
   function js(u) { return fetch(u, { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); }
   var first = DAYS[0].iso, last = DAYS[N - 1].iso;
+  var CWA_KEY = 'CWA-C4D89E8A-D414-46B9-BBEB-8B4B6EFAB8F8', ELS = encodeURIComponent('最高溫度,最低溫度,天氣現象');
+  function cwaKind(c) { return c === 1 ? 'sun' : c <= 3 ? 'part' : c <= 7 ? 'cloud' : c <= 14 ? 'rain' : c <= 22 ? 'storm' : (c === 23 || c === 42) ? 'snow' : c <= 28 ? 'fog' : 'rain'; }
+  function cwaDays(j) {   // CWA 12-hour periods -> per-date hi / lo / daytime weather
+    var out = {}, w = (((j || {}).records || {}).Locations || [{}])[0]; w = ((w.Location || [{}])[0] || {}).WeatherElement || [];
+    function get(n) { return (w.filter(function (e) { return e.ElementName === n; })[0] || {}).Time || []; }
+    function at(t) { var k = t.StartTime.slice(0, 10); return out[k] || (out[k] = {}); }
+    get('最高溫度').forEach(function (t) { var o = at(t), x = +t.ElementValue[0].MaxTemperature; if (!isNaN(x)) o.hi = Math.max(o.hi == null ? -99 : o.hi, x); });
+    get('最低溫度').forEach(function (t) { var o = at(t), x = +t.ElementValue[0].MinTemperature; if (!isNaN(x)) o.lo = Math.min(o.lo == null ? 99 : o.lo, x); });
+    get('天氣現象').forEach(function (t) { var o = at(t), h = +t.StartTime.slice(11, 13); if (o.k == null || (h >= 6 && h < 18)) { o.k = cwaKind(+t.ElementValue[0].WeatherCode); o.th = t.ElementValue[0].Weather; } });
+    return out;
+  }
+  function cwa(id, loc) { return js('https://opendata.cwa.gov.tw/api/v1/rest/datastore/' + id + '?Authorization=' + CWA_KEY + '&format=JSON&LocationName=' + encodeURIComponent(loc) + '&ElementName=' + ELS).then(cwaDays); }
+  var CWA_TH = { sun: 'แดด', part: 'แดดสลับเมฆ', cloud: 'เมฆมาก', rain: 'ฝน', storm: 'ฝนฟ้าคะนอง', snow: 'หิมะ', fog: 'หมอก' };
+  Promise.all([cwa('F-D0047-063', '中正區'), cwa('F-D0047-071', '瑞芳區')]).then(function (cw) {
+    DAYS.forEach(function (d) {
+      var jf = d.rows.some(function (r) { return /จิ่วเฟิ่น/.test(r.title); }), x = cw[jf ? 1 : 0][d.iso];
+      if (x && x.hi != null && x.lo != null) WX[d.iso] = { hi: x.hi, lo: x.lo, k: x.k || 'part', th: (CWA_TH[x.k] || '') + (jf ? ' · จิ่วเฟิ่น' : '') + ' · CWA' };
+    });
+    [].forEach.call(document.querySelectorAll('.wxp'), function (e) { var d = DAYS.filter(function (x) { return x.iso === e.dataset.iso; })[0]; if (d && WX[d.iso]) e.innerHTML = wxHtml(d); });
+  });
   Promise.all([Promise.resolve(null), js('https://api.open-meteo.com/v1/forecast?latitude=25.04&longitude=121.51&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=Asia%2FTaipei&forecast_days=16')]).then(function (res) {
     var cma = res[0], om = res[1] && res[1].daily;
     if (cma && cma.days) cma.days.forEach(function (x) { if (x.date >= first && x.date <= last && x.hi != null) WX[x.date] = { hi: x.hi, lo: x.lo, k: zKind(x.wx), th: thWx(x.wx) }; });
