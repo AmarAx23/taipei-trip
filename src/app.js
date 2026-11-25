@@ -409,8 +409,10 @@ document.addEventListener('click',async e=>{ const b=e.target.closest('[data-cop
 
 /* ---------- Checklist ---------- */
 /* tick animation shared by the checklists: box pops, row glows, a small burst, the line strikes through */
+let ptrUsed=false; addEventListener('pointerdown',()=>ptrUsed=true,true); addEventListener('keydown',()=>ptrUsed=false,true);
 function tickFx(input){
   const li=input.closest('li'); if(!li) return;
+  if(ptrUsed) input.blur();   // no focus ring after a tap/click; keyboard users keep it
   li.classList.remove('just'); void li.offsetWidth;
   if(!input.checked) return;
   li.classList.add('just'); setTimeout(()=>li.classList.remove('just'),800);
