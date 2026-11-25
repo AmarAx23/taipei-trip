@@ -408,17 +408,30 @@ document.addEventListener('click',async e=>{ const b=e.target.closest('[data-cop
 })();
 
 /* ---------- Checklist ---------- */
+/* tick animation shared by the checklists: box pops, row glows, a small burst, the line strikes through */
+function tickFx(input){
+  const li=input.closest('li'); if(!li) return;
+  li.classList.remove('just'); void li.offsetWidth;
+  if(!input.checked) return;
+  li.classList.add('just'); setTimeout(()=>li.classList.remove('just'),800);
+  try{ navigator.vibrate?.(12); }catch(_){}
+  if(RM) return;
+  const lab=input.closest('label'), b=document.createElement('i'); b.className='tick-burst';
+  b.style.left=(input.offsetLeft+input.offsetWidth/2)+'px'; b.style.top=(input.offsetTop+input.offsetHeight/2)+'px';
+  b.innerHTML=Array.from({length:8},(_,k)=>`<b style="--a:${k*45}deg"></b>`).join('');
+  lab.appendChild(b); setTimeout(()=>b.remove(),700);
+}
 (function checklist(){
   const ul=$('#checklist');
   let custom=ls.get('chk_custom',[]), done=ls.get('chk_done',{});
   const draw=()=>{
     const items=[...T.checklist.map(t=>({t,c:false})), ...custom.map(t=>({t,c:true}))];
-    ul.innerHTML=items.map((it,k)=>`<li><label><input type="checkbox" id="chk${k}" data-t="${esc(it.t)}" ${done[it.t]?'checked':''}><span>${esc(it.t)}</span>${it.c?`<button type="button" class="del" data-del="${esc(it.t)}" aria-label="ลบ">✕</button>`:''}</label></li>`).join('');
+    ul.innerHTML=items.map((it,k)=>`<li><label><input type="checkbox" id="chk${k}" data-t="${esc(it.t)}" ${done[it.t]?'checked':''}><span><i class="st">${esc(it.t)}</i></span>${it.c?`<button type="button" class="del" data-del="${esc(it.t)}" aria-label="ลบ">✕</button>`:''}</label></li>`).join('');
     const n=items.filter(it=>done[it.t]).length;
     $('#checkSub').textContent=`${n}/${items.length}`;
     $('#checkBar').style.width=(items.length?n/items.length*100:0)+'%';
   };
-  ul.addEventListener('change',e=>{ const t=e.target.dataset.t; if(t==null) return; if(e.target.checked) done[t]=1; else delete done[t]; ls.set('chk_done',done);
+  ul.addEventListener('change',e=>{ const t=e.target.dataset.t; if(t==null) return; if(e.target.checked) done[t]=1; else delete done[t]; ls.set('chk_done',done); tickFx(e.target);
     const n=Object.keys(done).length, all=T.checklist.length+custom.length; $('#checkSub').textContent=`${n}/${all}`; $('#checkBar').style.width=(n/all*100)+'%'; if(n===all) toast('🎉 เตรียมของครบแล้ว!'); });
   ul.addEventListener('click',e=>{ const d=e.target.dataset?.del; if(!d) return; e.preventDefault(); custom=custom.filter(x=>x!==d); delete done[d]; ls.set('chk_custom',custom); ls.set('chk_done',done); draw(); });
   $('#addCheck').addEventListener('submit',e=>{ e.preventDefault(); const v=$('#addCheckInput').value.trim(); if(!v) return; if(!custom.includes(v)&&!T.checklist.includes(v)) custom.push(v); ls.set('chk_custom',custom); $('#addCheckInput').value=''; draw(); });
@@ -981,9 +994,10 @@ $('#qrShare').onclick=()=>$('#shareBtn').click();
   const box=$('#preflight'), L=T.preflight||[]; if(!box||!L.length){ if(box) box.remove(); return; }
   let done=ls.get('pre_done',{});
   const draw=()=>{ const n=L.filter(x=>done[x.id]).length;
-    box.innerHTML=`<div class="pref-h"><b>✅ ต้องทำก่อนบิน</b><span>${n}/${L.length}</span></div><ul class="checklist">${L.map(x=>`<li><label><input type="checkbox" data-pre="${esc(x.id)}" ${done[x.id]?'checked':''}><span><b>${x.icon} ${esc(x.title)}</b><small>${esc(x.when)} · ${esc(x.note)}</small></span>${x.link?`<a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.linkText)} ↗</a>`:''}</label></li>`).join('')}</ul>`; };
+    box.innerHTML=`<div class="pref-h"><b>✅ ต้องทำก่อนบิน</b><span>${n}/${L.length}</span></div><ul class="checklist">${L.map(x=>`<li><label><input type="checkbox" data-pre="${esc(x.id)}" ${done[x.id]?'checked':''}><span><b><i class="st">${x.icon} ${esc(x.title)}</i></b><small><i class="st">${esc(x.when)} · ${esc(x.note)}</i></small></span>${x.link?`<a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.linkText)} ↗</a>`:''}</label></li>`).join('')}</ul>`; };
   draw();
-  box.addEventListener('change',e=>{ const id=e.target.dataset.pre; if(!id) return; if(e.target.checked) done[id]=1; else delete done[id]; ls.set('pre_done',done); draw(); });
+  box.addEventListener('change',e=>{ const id=e.target.dataset.pre; if(!id) return; if(e.target.checked) done[id]=1; else delete done[id]; ls.set('pre_done',done); tickFx(e.target);
+    const n=L.filter(x=>done[x.id]).length; box.querySelector('.pref-h span').textContent=`${n}/${L.length}`; if(n===L.length&&e.target.checked) setTimeout(()=>toast('✈️ พร้อมบินแล้ว!'),450); });
 })();
 
 })();

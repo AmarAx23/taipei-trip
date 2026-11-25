@@ -349,12 +349,23 @@ html.mfs-open .bnav{display:none}
 .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--red),var(--gold));transition:width .6s cubic-bezier(.2,.8,.2,1)}
 .checklist{list-style:none;margin:0;padding:0}
 .checklist li{border-bottom:1px solid var(--line)}
-.checklist label{display:flex;gap:12px;align-items:center;padding:10px 0;cursor:pointer}
+.checklist label{position:relative;display:flex;gap:12px;align-items:center;padding:10px 0;cursor:pointer}
 .checklist input{appearance:none;-webkit-appearance:none;width:22px;height:22px;border:1.5px solid var(--line);border-radius:7px;flex:none;display:grid;place-items:center;background:var(--card);transition:background .2s,border-color .2s;cursor:pointer;margin:0}
 .checklist input::after{content:"✓";color:#fff;font-size:14px;font-weight:700;transform:scale(0);transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
 .checklist input:checked{background:var(--red);border-color:var(--red)}
 .checklist input:checked::after{transform:scale(1)}
-.checklist input:checked+span{text-decoration:line-through;color:var(--muted)}
+.checklist .st{font-style:normal;background:linear-gradient(currentColor,currentColor) no-repeat 0 60%/0% 1.5px;-webkit-box-decoration-break:clone;box-decoration-break:clone;transition:background-size .5s cubic-bezier(.6,0,.3,1),color .35s}
+.checklist input:checked+span .st{background-size:100% 1.5px}
+.checklist input:checked+span{color:var(--muted)}
+.checklist li{transition:background .3s}
+.checklist li.just{animation:rowGlow .8s ease}
+.checklist li.just input{animation:tickPop .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes tickPop{0%{transform:scale(.6)}55%{transform:scale(1.22)}100%{transform:scale(1)}}
+@keyframes rowGlow{0%{background:rgba(181,135,47,.18)}100%{background:transparent}}
+.tick-burst{position:absolute;width:0;height:0;pointer-events:none;z-index:2}
+.tick-burst b{position:absolute;left:-2.5px;top:-2.5px;width:5px;height:5px;border-radius:50%;background:var(--gold);transform:rotate(var(--a)) translateY(0);animation:tickBurst .6s ease-out forwards}
+.tick-burst b:nth-child(odd){background:var(--red)}
+@keyframes tickBurst{to{transform:rotate(var(--a)) translateY(-20px) scale(.3);opacity:0}}
 .pref{margin:12px 0}
 .pref-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}
 .pref-h b{font-family:var(--head);font-weight:600;font-size:15px;color:var(--navy)}
@@ -363,7 +374,7 @@ html.mfs-open .bnav{display:none}
 .pref .checklist label>span{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
 .pref .checklist small{font-size:12px;color:var(--muted);line-height:1.4}
 .pref .checklist a{flex:none;font-size:12px;font-weight:600;text-decoration:none;color:var(--navy);background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:4px 10px;white-space:nowrap}
-.pref .checklist input:checked+span b{text-decoration:line-through;color:var(--muted)}
+.pref .checklist input:checked+span b,.pref .checklist input:checked+span small{color:var(--muted)}
 .checklist .del{margin-left:auto;border:0;background:none;color:var(--muted);cursor:pointer;font-size:15px}
 .add-check{display:flex;gap:8px;margin-top:12px}
 .add-check input{flex:1;min-width:0;border:1.5px solid var(--line);background:var(--bg);border-radius:999px;padding:8px 14px;outline:none}
