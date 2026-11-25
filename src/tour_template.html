@@ -534,7 +534,7 @@ function lightBeams(ll) {
 /* ---- passport stamps ---- */
 var INK = ['#b8323a', '#24427a', '#2e7d5b', '#8a3f8f', '#b8323a', '#1f6f7a', '#a4542a', '#24427a'];
 var MON = 'DEC';
-function stampCity(n) { return n === 1 ? 'TAIPEI · 台北 · ARRIVED' : n === 3 ? 'JIUFEN · 九份' : n === D.length - 2 ? 'TAIPEI · 台北 · TPE → BKK' : 'TAIPEI · 台北'; }
+function stampCity(n) { return n === 1 ? 'TAIPEI · 台北 · ARRIVED' : (D[n].it || []).some(function (x) { return /จิ่วเฟิ่น/.test(x.title); }) ? 'JIUFEN · 九份' : n === D.length - 2 ? 'TAIPEI · 台北 · TPE → BKK' : 'TAIPEI · 台北'; }
 function stampSVG(n) {
   var d = D[n] || {}, dd = d.iso ? d.iso.slice(8) : '', ring = stampCity(n) + ' · ' + dd + ' ' + MON + ' 2026 · ', id = 'sp' + n + Math.random().toString(36).slice(2, 6);
   return '<svg viewBox="0 0 200 200" aria-hidden="true"><defs><path id="' + id + '" d="M100,100 m-71,0 a71,71 0 1,1 142,0 a71,71 0 1,1 -142,0"/>' +

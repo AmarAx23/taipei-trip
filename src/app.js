@@ -791,6 +791,7 @@ document.addEventListener('click',e=>{
   T.days.forEach((d,i)=>d.stops.forEach((s,j)=>{ if(s.stamp) all.push({id:`${i}-${j}`,i,j,s}); }));
   if(!all.length) return;
   let got=ls.get(KEY,{}); const save=()=>ls.set(KEY,got);
+  if(!ls.get('stampsSwap23',0)){ const g={}; for(const k in got){ const [d,r]=k.split('-'); g[(d==='1'?'2':d==='2'?'1':d)+'-'+r]=got[k]; } got=g; save(); ls.set('stampsSwap23',1); }  // days 2 and 3 were swapped on 25 Nov
   const RED='#B0242E', GOLD='#B5872F';
   const ymd=iso=>{ const d=new Date(iso); const p=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}.${p(d.getMonth()+1)}.${p(d.getDate())}`; };
   let uid=0;
