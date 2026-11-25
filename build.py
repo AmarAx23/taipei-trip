@@ -95,7 +95,7 @@ self.addEventListener('fetch', e => {
   if (url.origin === location.origin && url.pathname.startsWith(new URL('./', location).pathname)) {
     // Page and assets always come from this version's cache, so they never mix versions
     e.respondWith(caches.open(CORE).then(async c => {
-      if (req.mode === 'navigate') return (await c.match('./index.html')) || fetch(req);
+      if (req.mode === 'navigate') return (await c.match(req, {ignoreSearch: true})) || (/\.html$/.test(url.pathname) && !url.pathname.endsWith('index.html') ? fetch(req) : (await c.match('./index.html')) || fetch(req));
       return (await c.match(req, {ignoreSearch: true})) || fetch(req);
     }));
   }
@@ -129,6 +129,9 @@ def main():
         pub[key] = {**p, "file": "img/" + p["file"], "full": "img/" + (p.get("full") or p["file"])}
 
     make_icons(DIST / "icons")
+
+    import tour_data
+    tour_data.build(trip, photos, DIST, SRC)
 
     manifest = {
         "name": trip["trip"]["name"], "short_name": trip["trip"]["name"], "lang": "th",

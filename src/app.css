@@ -124,6 +124,10 @@ html.ios-app body::after{content:"";position:fixed;top:0;left:0;right:0;height:e
 .hero-actions{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.14)}
 .hbtn{font-size:12px;font-weight:600;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.28);border-radius:12px;padding:7px 2px;cursor:pointer;display:flex;flex-direction:column;gap:2px;line-height:1.2;align-items:center;justify-content:center;white-space:nowrap}
 .hbtn i{font-style:normal;font-size:17px;line-height:1.1}
+.hero-row2{position:relative;z-index:3;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.hbtn2{display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:600;color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.28);border-radius:12px;padding:9px 6px;background:rgba(255,255,255,.06);white-space:nowrap}
+.hbtn2 i{font-style:normal;font-size:16px}
+.hbtn2:active{background:rgba(255,255,255,.16)}
 @media (max-width:380px){.hbtn{font-size:11px;letter-spacing:-.2px}.hero-actions{gap:5px}}
 .hbtn:active{background:rgba(255,255,255,.15)}
 .install{display:flex;align-items:center;gap:12px;width:100%;margin-top:10px;padding:10px 14px;border-radius:14px;border:1px solid rgba(235,203,130,.55);background:linear-gradient(rgba(235,203,130,.16),rgba(235,203,130,.16)),rgba(12,40,60,.85);color:#fff;text-align:left;cursor:pointer;animation:fadeUp .5s ease both}
